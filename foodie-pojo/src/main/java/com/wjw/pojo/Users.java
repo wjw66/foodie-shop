@@ -68,6 +68,13 @@ public class Users {
     @Column(name = "updated_time")
     private Date updatedTime;
 
+    public Users() {
+    }
+
+    public Users(String username) {
+        this.username = username;
+    }
+
     /**
      * 获取主键id 用户id
      *

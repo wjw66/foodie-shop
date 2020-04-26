@@ -21,7 +21,7 @@ public class StuServiceImplTest extends SpringBootApplicationTest {
     public void save() {
         Stu stu = new Stu();
         stu.setId(10086);
-        stu.setName("狗东西");
+        stu.setName("狗蛙");
         stu.setAge(18);
 
         int i = StuService.save(stu);
