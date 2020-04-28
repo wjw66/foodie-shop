@@ -1,5 +1,8 @@
 package com.wjw;
 
+import com.wjw.pojo.Users;
+import com.wjw.pojo.bo.UserBO;
+
 /**
  * @author : wjwjava01@163.com
  * @date : 20:35 2020/4/26
@@ -12,4 +15,11 @@ public interface UserService {
      * @return
      */
     boolean queryUsernameIsExist(String username);
+
+    /**
+     * 创建用户
+     * @param userBO
+     * @return
+     */
+    Users createUser(UserBO userBO);
 }

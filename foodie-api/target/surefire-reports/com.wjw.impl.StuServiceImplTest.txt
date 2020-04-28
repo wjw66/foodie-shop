@@ -1,0 +1,18 @@
+-------------------------------------------------------------------------------
+Test set: com.wjw.impl.StuServiceImplTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 11.374 s <<< FAILURE! - in com.wjw.impl.StuServiceImplTest
+save(com.wjw.impl.StuServiceImplTest)  Time elapsed: 1.303 s  <<< ERROR!
+org.springframework.dao.DuplicateKeyException: 
+
+### Error updating database.  Cause: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '10086' for key 'stu.PRIMARY'
+### The error may exist in com/wjw/mapper/StuMapper.java (best guess)
+### The error may involve com.wjw.mapper.StuMapper.insert-Inline
+### The error occurred while setting parameters
+### SQL: INSERT INTO stu  ( id,name,age ) VALUES( ?,?,? )
+### Cause: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '10086' for key 'stu.PRIMARY'
+; Duplicate entry '10086' for key 'stu.PRIMARY'; nested exception is java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '10086' for key 'stu.PRIMARY'
+	at com.wjw.impl.StuServiceImplTest.save(StuServiceImplTest.java:27)
+Caused by: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '10086' for key 'stu.PRIMARY'
+	at com.wjw.impl.StuServiceImplTest.save(StuServiceImplTest.java:27)
+
