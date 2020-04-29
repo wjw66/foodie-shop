@@ -1,4 +1,5 @@
 package com.wjw.impl;
+
 import com.wjw.UserService;
 import com.wjw.mapper.UsersMapper;
 import com.wjw.pojo.Users;
@@ -7,7 +8,9 @@ import com.wjw.utils.DateUtil;
 import com.wjw.utils.MD5Utils;
 import org.n3r.idworker.Sid;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -72,5 +75,23 @@ public class UserServiceImpl implements UserService {
 
         usersMapper.insert(users);
         return users;
+    }
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public Users queryUserForLogin(String username, String password) {
+
+//        try {
+//            Thread.sleep(2500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        Example userExample = new Example(Users.class);
+        Example.Criteria userCriteria = userExample.createCriteria();
+
+        userCriteria.andEqualTo("username", username);
+        userCriteria.andEqualTo("password", password);
+
+        return usersMapper.selectOneByExample(userExample);
     }
 }
