@@ -3,11 +3,15 @@ package com.wjw.controller;
 import com.wjw.UserService;
 import com.wjw.pojo.Users;
 import com.wjw.pojo.bo.UserBO;
+import com.wjw.pojo.vo.UserVO;
+import com.wjw.utils.CookieUtils;
 import com.wjw.utils.JSONResult;
+import com.wjw.utils.JsonUtils;
 import com.wjw.utils.MD5Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -38,6 +42,7 @@ public class PassportController {
         }
         return JSONResult.ok();
     }
+
     @ApiOperation(value = "用户注册")
     @PostMapping("/register")
     public JSONResult register(@RequestBody UserBO userBO) {
@@ -66,7 +71,7 @@ public class PassportController {
 
     @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
     @PostMapping("/login")
-    public JSONResult login(@RequestBody UserBO userBO, HttpServletRequest request,HttpServletResponse response) throws Exception {
+    public JSONResult login(@RequestBody UserBO userBO, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         String username = userBO.getUsername();
         String password = userBO.getPassword();
@@ -78,17 +83,19 @@ public class PassportController {
         }
 
         // 1. 实现登录
-        Users userResult = userService.queryUserForLogin(username,
+        Users user = userService.queryUserForLogin(username,
                 MD5Utils.getMD5Str(password));
 
-        if (userResult == null) {
+        if (user == null) {
             return JSONResult.errorMsg("用户名或密码不正确");
         }
 
-//        userResult = setNullProperty(userResult);
-//
-//        CookieUtils.setCookie(request, response, "user",
-//                JsonUtils.objectToJson(userResult), true);
+        UserVO userResult = new UserVO();
+        BeanUtils.copyProperties(user, userResult);
+
+        //将user信息设置到Cookie中,并加密
+        CookieUtils.setCookie(request, response, "user",
+                JsonUtils.objectToJson(userResult), true);
 
 
         // TODO 生成用户token，存入redis会话

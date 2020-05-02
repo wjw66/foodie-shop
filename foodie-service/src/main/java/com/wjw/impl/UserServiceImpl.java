@@ -8,7 +8,6 @@ import com.wjw.utils.DateUtil;
 import com.wjw.utils.MD5Utils;
 import org.n3r.idworker.Sid;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
@@ -76,7 +75,7 @@ public class UserServiceImpl implements UserService {
         usersMapper.insert(users);
         return users;
     }
-    @Transactional(propagation = Propagation.SUPPORTS)
+
     @Override
     public Users queryUserForLogin(String username, String password) {
 
