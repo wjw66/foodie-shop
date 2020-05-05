@@ -6,6 +6,7 @@ import com.wjw.pojo.Stu;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author : wjwjava01@163.com
@@ -18,9 +19,10 @@ public class StuServiceImplTest extends SpringBootApplicationTest {
     private StuService StuService;
 
     @Test
+    @Transactional
     public void save() {
         Stu stu = new Stu();
-        stu.setId(10086);
+        stu.setId(100878);
         stu.setName("狗蛙");
         stu.setAge(18);
 

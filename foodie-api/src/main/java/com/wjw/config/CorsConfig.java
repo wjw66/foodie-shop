@@ -18,23 +18,29 @@ public class CorsConfig {
 
     @Bean
     public CorsFilter corsFilter() {
-        //1.添加cors配置信息
+        // 1. 添加cors配置信息
         CorsConfiguration config = new CorsConfiguration();
-        //后端地址
-        config.addAllowedOrigin("http://localhost:8088");
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://shop.z.mukewang.com:8080");
+        config.addAllowedOrigin("http://center.z.mukewang.com:8080");
+        config.addAllowedOrigin("http://shop.z.mukewang.com");
+        config.addAllowedOrigin("http://center.z.mukewang.com");
+        config.addAllowedOrigin("*");
 
-        //设置是否发送cookie信息
+        // 设置是否发送cookie信息
         config.setAllowCredentials(true);
-        //设置允许请求的方式
+
+        // 设置允许请求的方式
         config.addAllowedMethod("*");
-        //设置允许的header
+
+        // 设置允许的header
         config.addAllowedHeader("*");
 
-        //2.为url添加映射路径
+        // 2. 为url添加映射路径
         UrlBasedCorsConfigurationSource corsSource = new UrlBasedCorsConfigurationSource();
-        corsSource.registerCorsConfiguration("/**",config);
+        corsSource.registerCorsConfiguration("/**", config);
 
-        //3.返回重新定义好的corsSource
+        // 3. 返回重新定义好的corsSource
         return new CorsFilter(corsSource);
     }
 

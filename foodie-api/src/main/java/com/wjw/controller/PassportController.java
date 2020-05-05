@@ -45,7 +45,8 @@ public class PassportController {
 
     @ApiOperation(value = "用户注册")
     @PostMapping("/register")
-    public JSONResult register(@RequestBody UserBO userBO) {
+    public JSONResult register(@RequestBody UserBO userBO, HttpServletRequest request,
+                               HttpServletResponse response) {
         //0.判断用户名和密码必须不为空
         if (StringUtils.isBlank(userBO.getUsername()) || StringUtils.isBlank(userBO.getPassword())
                 || StringUtils.isBlank(userBO.getConfirmPassword())) {
@@ -66,12 +67,30 @@ public class PassportController {
 
         //4.实现注册
         Users user = userService.createUser(userBO);
+
+        //5.实现注册完成自动登录
+        UserVO userResult = new UserVO();
+        BeanUtils.copyProperties(user, userResult);
+
+        //将user信息设置到Cookie中,并加密
+        CookieUtils.setCookie(request, response, "user",
+                JsonUtils.objectToJson(userResult), true);
         return JSONResult.ok(user);
     }
 
+    /**
+     * 用户登录
+     *
+     * @param userBO   对象
+     * @param request  请求
+     * @param response 响应
+     * @return 返回
+     * @throws Exception 异常
+     */
     @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
     @PostMapping("/login")
-    public JSONResult login(@RequestBody UserBO userBO, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public JSONResult login(@RequestBody UserBO userBO, HttpServletRequest request,
+                            HttpServletResponse response) throws Exception {
 
         String username = userBO.getUsername();
         String password = userBO.getPassword();
@@ -103,4 +122,20 @@ public class PassportController {
 
         return JSONResult.ok(userResult);
     }
+
+    @ApiOperation(value = "用户退出登录", notes = "用户退出登录", httpMethod = "POST")
+    @PostMapping("/logout")
+    public JSONResult logout(@RequestParam String userId,
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
+
+        // 清除用户的相关信息的cookie
+        CookieUtils.deleteCookie(request, response, "user");
+
+        // TODO 用户退出登录，需要清空购物车
+        // TODO 分布式会话中需要清除用户数据
+
+        return JSONResult.ok();
+    }
+
 }
