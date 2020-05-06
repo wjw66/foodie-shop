@@ -2,7 +2,9 @@ package com.wjw.impl;
 
 import com.wjw.CategoryService;
 import com.wjw.mapper.CategoryMapper;
+import com.wjw.mapper.CategoryMapperCustom;
 import com.wjw.pojo.Category;
+import com.wjw.pojo.vo.CategoryVO;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -18,6 +20,8 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     @Resource
     private CategoryMapper categoryMapper;
+    @Resource
+    private CategoryMapperCustom categoryMapperCustom;
 
     /**
      * 查询所有一级分类
@@ -32,6 +36,17 @@ public class CategoryServiceImpl implements CategoryService {
         criteria.andEqualTo("type", 1);
 
         return categoryMapper.selectByExample(example);
+    }
+
+    /**
+     * 查询根类目下的子类目
+     *
+     * @param rootCatId 根类目Id
+     * @return
+     */
+    @Override
+    public List<CategoryVO> getSubCatList(Integer rootCatId) {
+        return categoryMapperCustom.getSubCatList(rootCatId);
     }
 
 }

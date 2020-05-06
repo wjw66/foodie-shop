@@ -1,6 +1,7 @@
 package com.wjw;
 
 import com.wjw.pojo.Category;
+import com.wjw.pojo.vo.CategoryVO;
 
 import java.util.List;
 
@@ -15,4 +16,11 @@ public interface CategoryService {
      * @return
      */
     List<Category> queryAllRootLevelCat();
+
+    /**
+     * 查询根类目下的子类目
+     * @param rootCatId 根类目Id
+     * @return
+     */
+    List<CategoryVO> getSubCatList(Integer rootCatId);
 }
