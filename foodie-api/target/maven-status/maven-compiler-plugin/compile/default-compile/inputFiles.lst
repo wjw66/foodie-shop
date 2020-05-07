@@ -1,7 +1,7 @@
-D:\IdeaProject\foodies-dev\foodie-api\src\main\java\com\wjw\controller\PassportController.java
-D:\IdeaProject\foodies-dev\foodie-api\src\main\java\com\wjw\config\CorsConfig.java
-D:\IdeaProject\foodies-dev\foodie-api\src\main\java\com\wjw\controller\hello.java
-D:\IdeaProject\foodies-dev\foodie-api\src\main\java\com\wjw\config\Swagger2.java
-D:\IdeaProject\foodies-dev\foodie-api\src\main\java\com\wjw\aspect\ServiceLogAspect.java
-D:\IdeaProject\foodies-dev\foodie-api\src\main\java\com\wjw\Application.java
-D:\IdeaProject\foodies-dev\foodie-api\src\main\java\com\wjw\controller\IndexController.java
+/home/codespark/IdeaProjects/foodie-shop/foodie-api/src/main/java/com/wjw/controller/PassportController.java
+/home/codespark/IdeaProjects/foodie-shop/foodie-api/src/main/java/com/wjw/aspect/ServiceLogAspect.java
+/home/codespark/IdeaProjects/foodie-shop/foodie-api/src/main/java/com/wjw/controller/IndexController.java
+/home/codespark/IdeaProjects/foodie-shop/foodie-api/src/main/java/com/wjw/config/CorsConfig.java
+/home/codespark/IdeaProjects/foodie-shop/foodie-api/src/main/java/com/wjw/controller/hello.java
+/home/codespark/IdeaProjects/foodie-shop/foodie-api/src/main/java/com/wjw/Application.java
+/home/codespark/IdeaProjects/foodie-shop/foodie-api/src/main/java/com/wjw/config/Swagger2.java

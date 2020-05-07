@@ -5,10 +5,12 @@ import com.wjw.mapper.CategoryMapper;
 import com.wjw.mapper.CategoryMapperCustom;
 import com.wjw.pojo.Category;
 import com.wjw.pojo.vo.CategoryVO;
+import com.wjw.pojo.vo.NewItemsVO;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -47,6 +49,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryVO> getSubCatList(Integer rootCatId) {
         return categoryMapperCustom.getSubCatList(rootCatId);
+    }
+
+    @Override
+    public List<NewItemsVO> getSixNewItemsLazy(Integer rootCatId) {
+        HashMap<String, Object> map = new HashMap<>(16);
+        map.put("rootCatId",rootCatId);
+        return categoryMapperCustom.getSixNewItemsLazy(map);
     }
 
 }

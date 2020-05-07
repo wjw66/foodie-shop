@@ -1,35 +1,23 @@
 package com.wjw.pojo.vo;
 
+import lombok.Data;
+
 /**
  * 6个最新商品的简单数据类型
  */
+@Data
 public class SimpleItemVO {
-
+    /**
+     * 商品id
+     */
     private String itemId;
+    /**
+     * 商品名称
+     */
     private String itemName;
+    /**
+     * 商品图片url
+     */
     private String itemUrl;
 
-    public String getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
-    }
-
-    public String getItemName() {
-        return itemName;
-    }
-
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public String getItemUrl() {
-        return itemUrl;
-    }
-
-    public void setItemUrl(String itemUrl) {
-        this.itemUrl = itemUrl;
-    }
 }
