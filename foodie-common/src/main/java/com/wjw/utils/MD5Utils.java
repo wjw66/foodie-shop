@@ -22,12 +22,16 @@ public class MD5Utils {
 		return newstr;
 	}
 
-	public static void main(String[] args) {
-		try {
-			String md5 = getMD5Str("wjw");
-			System.out.println(md5);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	/**
+//	 * MD5实例
+//	 * @param args
+//	 */
+//	public static void main(String[] args) {
+//		try {
+//			String md5 = getMD5Str("wjw");
+//			System.out.println(md5);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

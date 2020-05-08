@@ -4,48 +4,31 @@ import com.wjw.pojo.Items;
 import com.wjw.pojo.ItemsImg;
 import com.wjw.pojo.ItemsParam;
 import com.wjw.pojo.ItemsSpec;
+import lombok.Data;
 
 import java.util.List;
 
 /**
  * 商品详情VO
  */
+@Data
 public class ItemInfoVO {
-
+    /**
+     * 商品信息
+     */
     private Items item;
+    /**
+     * 商品图片列表
+     */
     private List<ItemsImg> itemImgList;
+    /**
+     * 商品规格列表
+     */
     private List<ItemsSpec> itemSpecList;
+    /**
+     * 商品参数信息
+     */
     private ItemsParam itemParams;
 
-    public Items getItem() {
-        return item;
-    }
 
-    public void setItem(Items item) {
-        this.item = item;
-    }
-
-    public List<ItemsImg> getItemImgList() {
-        return itemImgList;
-    }
-
-    public void setItemImgList(List<ItemsImg> itemImgList) {
-        this.itemImgList = itemImgList;
-    }
-
-    public List<ItemsSpec> getItemSpecList() {
-        return itemSpecList;
-    }
-
-    public void setItemSpecList(List<ItemsSpec> itemSpecList) {
-        this.itemSpecList = itemSpecList;
-    }
-
-    public ItemsParam getItemParams() {
-        return itemParams;
-    }
-
-    public void setItemParams(ItemsParam itemParams) {
-        this.itemParams = itemParams;
-    }
 }
