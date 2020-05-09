@@ -20,6 +20,11 @@ public interface ItemsMapperCustom {
      */
     List<ItemCommentVO> queryItemComments(@Param("paramsMap") Map<String, Object> map);
 
+    /**
+     * 商品搜索
+     * @param map
+     * @return
+     */
     List<SearchItemsVO> searchItems(@Param("paramsMap") Map<String, Object> map);
 
     List<SearchItemsVO> searchItemsByThirdCat(@Param("paramsMap") Map<String, Object> map);
