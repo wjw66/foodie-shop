@@ -21,12 +21,17 @@ public interface ItemsMapperCustom {
     List<ItemCommentVO> queryItemComments(@Param("paramsMap") Map<String, Object> map);
 
     /**
-     * 商品搜索
-     * @param map
+     * 通过搜索框模糊查询商品
+     * @param map 搜索的参数
      * @return
      */
     List<SearchItemsVO> searchItems(@Param("paramsMap") Map<String, Object> map);
 
+    /**
+     * 通过分类id搜索商品
+     * @param map
+     * @return
+     */
     List<SearchItemsVO> searchItemsByThirdCat(@Param("paramsMap") Map<String, Object> map);
 
     List<ShopcartVO> queryItemsBySpecIds(@Param("paramsList") List specIdsList);

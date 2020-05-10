@@ -46,8 +46,10 @@ public interface ItemService {
      * @return
      */
     ItemsParam queryItemParam(String itemId);
+
     /**
      * 根据商品id查询商品的评价等级数量
+     *
      * @param itemId
      * @return CommentLevelCountsVO
      */
@@ -55,12 +57,35 @@ public interface ItemService {
 
     /**
      * 根据商品id查询商品的评价（分页）
+     *
      * @param itemId
-     * @param level 评价等级，可为空
-     * @param page 当前页数
+     * @param level    评价等级，可为空
+     * @param page     当前页数
      * @param pageSize 每页显示数量
      * @return
      */
     PagedGridResult queryPagedComments(String itemId, Integer level,
                                        Integer page, Integer pageSize);
+
+    /**
+     * 搜索商品列表
+     *
+     * @param keywords 商品模糊查询关键词
+     * @param sort     排名方式
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PagedGridResult searchItems(String keywords, String sort, Integer page, Integer pageSize);
+
+    /**
+     * 根据分类id搜索商品列表
+     *
+     * @param catId    分类id
+     * @param sort
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PagedGridResult searchItems(Integer catId, String sort, Integer page, Integer pageSize);
 }

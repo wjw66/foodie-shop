@@ -8,6 +8,7 @@ import com.wjw.mapper.*;
 import com.wjw.pojo.*;
 import com.wjw.pojo.vo.CommentLevelCountsVO;
 import com.wjw.pojo.vo.ItemCommentVO;
+import com.wjw.pojo.vo.SearchItemsVO;
 import com.wjw.utils.DesensitizationUtil;
 import com.wjw.utils.PagedGridResult;
 import org.springframework.stereotype.Service;
@@ -142,6 +143,47 @@ public class ItemServiceImpl implements ItemService {
         list.forEach(itemCommentVO -> itemCommentVO.setNickname
                 (DesensitizationUtil.commonDisplay(itemCommentVO.getNickname()))
         );
+
+        return setterPagedGrid(list, page);
+    }
+
+    /**
+     * 搜索商品列表
+     *
+     * @param keywords 商品模糊查询关键词
+     * @param sort     排名方式
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public PagedGridResult searchItems(String keywords, String sort, Integer page, Integer pageSize) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("keywords",keywords);
+        map.put("sort",sort);
+        PageHelper.startPage(page,pageSize);
+        List<SearchItemsVO> list = itemsMapperCustom.searchItems(map);
+
+        return setterPagedGrid(list,page);
+    }
+
+    /**
+     * 根据分类id搜索商品列表
+     *
+     * @param catId    分类id
+     * @param sort
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public PagedGridResult searchItems(Integer catId, String sort, Integer page, Integer pageSize) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("catId", catId);
+        map.put("sort", sort);
+
+        PageHelper.startPage(page, pageSize);
+        List<SearchItemsVO> list = itemsMapperCustom.searchItemsByThirdCat(map);
 
         return setterPagedGrid(list, page);
     }
