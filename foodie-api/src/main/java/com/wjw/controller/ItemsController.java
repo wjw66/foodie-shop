@@ -55,9 +55,7 @@ public class ItemsController {
 
     @ApiOperation(value = "查询商品评价等级", notes = "查询商品评价等级", httpMethod = "GET")
     @GetMapping("/commentLevel")
-    public JSONResult commentLevel(
-            @ApiParam(name = "itemId", value = "商品id", required = true)
-            @RequestParam String itemId) {
+    public JSONResult commentLevel(@ApiParam(name = "itemId", value = "商品id", required = true) @RequestParam String itemId) {
 
         if (StringUtils.isBlank(itemId)) {
             return JSONResult.errorMsg(null);
