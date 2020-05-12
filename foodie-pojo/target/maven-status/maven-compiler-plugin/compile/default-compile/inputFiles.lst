@@ -16,7 +16,7 @@ D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\vo\MyCommentVO
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\Carousel.java
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\vo\MyOrdersVO.java
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\vo\UserVO.java
-D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\vo\ShopcartVO.java
+D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\vo\ShopCartVO.java
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\vo\OrderVO.java
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\bo\SubmitOrderBO.java
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\ItemsImg.java
@@ -29,6 +29,6 @@ D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\Category.java
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\vo\SimpleItemVO.java
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\vo\OrderStatusCountsVO.java
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\ItemsComments.java
-D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\bo\ShopcartBO.java
+D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\bo\ShopCartBO.java
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\vo\ItemCommentVO.java
 D:\IdeaProject\foodies-dev\foodie-pojo\src\main\java\com\wjw\pojo\vo\SubCategoryVO.java

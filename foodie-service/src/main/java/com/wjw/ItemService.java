@@ -5,6 +5,7 @@ import com.wjw.pojo.ItemsImg;
 import com.wjw.pojo.ItemsParam;
 import com.wjw.pojo.ItemsSpec;
 import com.wjw.pojo.vo.CommentLevelCountsVO;
+import com.wjw.pojo.vo.ShopCartVO;
 import com.wjw.utils.PagedGridResult;
 
 import java.util.List;
@@ -88,4 +89,11 @@ public interface ItemService {
      * @return
      */
     PagedGridResult searchItems(Integer catId, String sort, Integer page, Integer pageSize);
+
+    /**
+     * 根据规格ids查询最新的购物车中商品数据(用于刷新渲染购物车中的商品数据)
+     * @param specIds
+     * @return
+     */
+    List<ShopCartVO> queryItemsBySpecIds(String specIds);
 }

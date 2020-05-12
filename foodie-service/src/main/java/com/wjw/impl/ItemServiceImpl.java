@@ -9,15 +9,14 @@ import com.wjw.pojo.*;
 import com.wjw.pojo.vo.CommentLevelCountsVO;
 import com.wjw.pojo.vo.ItemCommentVO;
 import com.wjw.pojo.vo.SearchItemsVO;
+import com.wjw.pojo.vo.ShopCartVO;
 import com.wjw.utils.DesensitizationUtil;
 import com.wjw.utils.PagedGridResult;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author : wjwjava01@163.com
@@ -186,6 +185,21 @@ public class ItemServiceImpl implements ItemService {
         List<SearchItemsVO> list = itemsMapperCustom.searchItemsByThirdCat(map);
 
         return setterPagedGrid(list, page);
+    }
+
+    /**
+     * 根据规格ids查询最新的购物车中商品数据(用于刷新渲染购物车中的商品数据)
+     *
+     * @param specIds
+     * @return
+     */
+    @Override
+    public List<ShopCartVO> queryItemsBySpecIds(String specIds) {
+        String[] spec = specIds.split(",");
+        ArrayList<String> list = new ArrayList<>();
+        Collections.addAll(list,spec);
+
+        return itemsMapperCustom.queryItemsBySpecIds(list);
     }
 
     private Integer getCommentCounts(String itemId, Integer level) {

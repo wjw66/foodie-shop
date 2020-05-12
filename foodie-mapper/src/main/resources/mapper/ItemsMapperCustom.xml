@@ -99,7 +99,7 @@
     </select>
 
 
-    <select id="queryItemsBySpecIds" parameterType="List" resultType="com.wjw.pojo.vo.ShopcartVO">
+    <select id="queryItemsBySpecIds" parameterType="List" resultType="com.wjw.pojo.vo.ShopCartVO">
         SELECT
             t_items.id as itemId,
             t_items.item_name as itemName,
@@ -122,9 +122,9 @@
             t_items_img.is_main = 1
         AND
             t_items_spec.id IN
-            <foreach collection="paramsList" index="index" item="specId" open="(" separator="," close=")">
-              #{specId}
-            </foreach>
+           <foreach collection="paramsList" index="index" open="(" separator="," close=")"  item="specIds">
+               #{specIds}
+           </foreach>
     </select>
 
     <update id="decreaseItemSpecStock">

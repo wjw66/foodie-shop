@@ -1,81 +1,44 @@
 package com.wjw.pojo.bo;
 
+import lombok.Data;
+
 /**
  * 用户新增或修改地址的BO
+ * @author asus
  */
+@Data
 public class AddressBO {
-
+    /**
+     * 地址主键id
+     */
     private String addressId;
-
+    /**
+     * 用户id
+     */
     private String userId;
+    /**
+     * 接收人姓名
+     */
     private String receiver;
+    /**
+     * 接收人手机号
+     */
     private String mobile;
+    /**
+     * 省
+     */
     private String province;
+    /**
+     * 城市
+     */
     private String city;
+    /**
+     * 区县
+     */
     private String district;
+    /**
+     * 详细地址
+     */
     private String detail;
 
-    public String getAddressId() {
-        return addressId;
-    }
-
-    public void setAddressId(String addressId) {
-        this.addressId = addressId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public String getProvince() {
-        return province;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getDistrict() {
-        return district;
-    }
-
-    public void setDistrict(String district) {
-        this.district = district;
-    }
-
-    public String getDetail() {
-        return detail;
-    }
-
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
 }
