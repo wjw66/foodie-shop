@@ -24,4 +24,25 @@ public interface AddressService {
      * @return
      */
     int addNewUserAddress(AddressBO addressBO);
+
+    /**
+     * 用户修改地址
+     * @param addressBO
+     * @return
+     */
+    int updateUserAddress(AddressBO addressBO);
+
+    /**
+     * 根据用户id和地址id，删除对应的用户地址信息
+     * @param userId
+     * @param addressId
+     */
+    void deleteUserAddress(String userId, String addressId);
+
+    /**
+     * 更新地址为默认地址
+     * @param userId
+     * @param addressId
+     */
+    void updateUserAddressToBeDefault(String userId, String addressId);
 }
