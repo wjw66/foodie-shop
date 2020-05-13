@@ -3,6 +3,7 @@ package com.wjw.pojo.vo;
 import lombok.Data;
 
 /**
+ * 购物车VO
  * @author asus
  */
 @Data

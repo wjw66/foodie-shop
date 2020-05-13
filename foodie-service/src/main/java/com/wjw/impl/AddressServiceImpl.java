@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author : wjwjava01@163.com
@@ -36,6 +37,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public List<UserAddress> queryAll(String userId) {
         UserAddress address = new UserAddress();
+        address.setUserId(userId);
         return userAddressMapper.select(address);
     }
 
@@ -88,7 +90,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     public void updateUserAddressToBeDefault(String userId, String addressId) {
         UserAddress userAddress = new UserAddress();
         userAddress.setUserId(userId);
@@ -96,8 +98,8 @@ public class AddressServiceImpl implements AddressService {
         //1.查出默认地址，设置为普通地址
         userAddress.setIsDefault(YesOrNo.YES.type);
         UserAddress defaultAddress = userAddressMapper.selectOne(userAddress);
-
-        if (addressId.equals(defaultAddress.getId())){
+        //如果为空或当前地址已经为默认地址
+        if (Objects.nonNull(defaultAddress) && addressId.equals(defaultAddress.getId())) {
             return;
         }
         userAddress.setIsDefault(YesOrNo.NO.type);
@@ -107,5 +109,21 @@ public class AddressServiceImpl implements AddressService {
         userAddress.setId(addressId);
         userAddress.setIsDefault(YesOrNo.YES.type);
         userAddressMapper.updateByPrimaryKeySelective(userAddress);
+    }
+
+    /**
+     * 根据用户id和地址id，查询具体的用户地址对象信息
+     *
+     * @param userId
+     * @param addressId
+     * @return
+     */
+    @Override
+    public UserAddress queryUserAddress(String userId, String addressId) {
+
+        UserAddress userAddress = new UserAddress();
+        userAddress.setUserId(userId);
+        userAddress.setId(addressId);
+        return userAddressMapper.selectOne(userAddress);
     }
 }
