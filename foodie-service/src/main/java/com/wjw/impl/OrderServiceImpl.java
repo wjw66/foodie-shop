@@ -4,16 +4,27 @@ import com.wjw.AddressService;
 import com.wjw.ItemService;
 import com.wjw.OrderService;
 import com.wjw.enums.YesOrNo;
+import com.wjw.mapper.ItemsSpecMapperCustom;
 import com.wjw.mapper.OrdersMapper;
+import com.wjw.pojo.ItemsSpec;
+import com.wjw.pojo.OrderItems;
 import com.wjw.pojo.Orders;
 import com.wjw.pojo.UserAddress;
 import com.wjw.pojo.bo.SubmitOrderBO;
+import com.wjw.pojo.vo.ItemOrderVO;
 import com.wjw.pojo.vo.OrderVO;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author : wjwjava01@163.com
@@ -29,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
     private AddressService addressService;
     @Autowired
     private ItemService itemService;
+    @Resource
+    private ItemsSpecMapperCustom itemsSpecMapperCustom;
 
     /**
      * 用于创建订单相关信息
@@ -37,6 +50,7 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     public OrderVO createOrder(SubmitOrderBO submitOrderBO) {
         String userId = submitOrderBO.getUserId();
         String addressId = submitOrderBO.getAddressId();
@@ -64,6 +78,7 @@ public class OrderServiceImpl implements OrderService {
 
 //        newOrder.setTotalAmount();//总金额
 //        newOrder.setRealPayAmount();//支付金额
+
         newOrder.setPostAmount(postAmount);
         newOrder.setPayMethod(payMethod);
         newOrder.setLeftMsg(leftMsg);
@@ -72,6 +87,37 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setIsDelete(YesOrNo.NO.type);
         newOrder.setCreatedTime(new Date());
         newOrder.setUpdatedTime(new Date());
+
+        //商品原价累计
+        AtomicInteger totalAmount = new AtomicInteger(0);
+        //商品实付价累计
+        AtomicInteger realPayAmount = new AtomicInteger(0);
+        // TODO 整合redis后，商品购买的数量重新从redis的购物车中获取
+        int buyCounts = 1;
+        List<OrderItems> orderItems = new ArrayList<>();
+        //2.循环根据itemSpecIds保存订单商品信息表
+        String[] itemSpecIdArr = itemSpecIds.split(",");
+        List<ItemOrderVO> itemsSpecs = itemsSpecMapperCustom.querySpecSpecIds(Arrays.asList(itemSpecIdArr));
+        itemsSpecs.forEach(itemsSpec -> {
+            // 2.1 根据规格id，查询规格的具体信息，主要获取价格
+            totalAmount.updateAndGet(v -> v +itemsSpec.getPriceNormal() * buyCounts);
+            realPayAmount.updateAndGet(v -> v + itemsSpec.getPriceDiscount() * buyCounts);
+
+            // 2.2 构建商品信息以及商品图片参数
+            OrderItems subOrderItems = new OrderItems();
+            subOrderItems.setId(sid.nextShort());
+            subOrderItems.setOrderId(orderId);
+            subOrderItems.setItemId(itemsSpec.getItemId());
+            subOrderItems.setItemName(itemsSpec.getItemName());
+            subOrderItems.setPrice(itemsSpec.getPriceDiscount());
+            subOrderItems.setItemSpecName(itemsSpec.getName());
+            subOrderItems.setItemSpecId(itemsSpec.getId());
+            subOrderItems.setItemImg(itemsSpec.getImgUrl());
+            subOrderItems.setBuyCounts(buyCounts);
+            orderItems.add(subOrderItems);
+        });
+        //保存订单数据到数据库
+
         return null;
     }
 }

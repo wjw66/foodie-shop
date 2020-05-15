@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wjw.mapper.ItemsSpecMapperCustom">
+
+    <select id="querySpecSpecIds" parameterType="List" resultType="com.wjw.pojo.vo.ItemOrderVO">
+        SELECT
+        isp.id,isp.item_id,isp.name,isp.stock,isp.discounts,isp.price_discount,isp.price_normal,
+        im.url,
+        it.item_name
+        FROM
+        items_spec isp
+        left join items_img im on isp.item_id = im.item_id and im.is_main = 1
+        left join items it on isp.item_id = it.id
+        WHERE
+        isp.id IN
+        <foreach collection="paramsList" index="index" item="specId" open="(" separator="," close=")">
+            #{specId}
+        </foreach>
+    </select>
+</mapper>
