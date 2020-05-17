@@ -5,14 +5,16 @@ import com.wjw.ItemService;
 import com.wjw.OrderService;
 import com.wjw.enums.OrderStatusEnum;
 import com.wjw.enums.YesOrNo;
-import com.wjw.mapper.*;
+import com.wjw.mapper.ItemsSpecMapperCustom;
+import com.wjw.mapper.OrderItemsMapperCustom;
+import com.wjw.mapper.OrderStatusMapper;
+import com.wjw.mapper.OrdersMapper;
 import com.wjw.pojo.OrderItems;
 import com.wjw.pojo.OrderStatus;
 import com.wjw.pojo.Orders;
 import com.wjw.pojo.UserAddress;
 import com.wjw.pojo.bo.SubmitOrderBO;
 import com.wjw.pojo.vo.ItemOrderVO;
-import com.wjw.pojo.vo.OrderVO;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,7 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     private OrderStatusMapper orderStatusMapper;
 
+
     /**
      * 用于创建订单相关信息
      *
@@ -56,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
-    public OrderVO createOrder(SubmitOrderBO submitOrderBO) {
+    public String createOrder(SubmitOrderBO submitOrderBO) {
         String userId = submitOrderBO.getUserId();
         String addressId = submitOrderBO.getAddressId();
         String itemSpecIds = submitOrderBO.getItemSpecIds();
@@ -139,6 +142,22 @@ public class OrderServiceImpl implements OrderService {
         orderStatusMapper.insertSelective(orderStatus);
 
 
-        return null;
+        return orderId;
+    }
+
+    /**
+     * 修改订单状态
+     *
+     * @param orderId     id
+     * @param orderStatus 状态枚举
+     */
+    @Override
+    public void updateOrderStatus(String orderId, Integer orderStatus) {
+        OrderStatus paidStatus = new OrderStatus();
+        paidStatus.setOrderId(orderId);
+        paidStatus.setOrderStatus(orderStatus);
+        paidStatus.setPayTime(new Date());
+
+        orderStatusMapper.updateByPrimaryKeySelective(paidStatus);
     }
 }
