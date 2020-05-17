@@ -5,7 +5,7 @@
     <select id="querySpecSpecIds" parameterType="List" resultType="com.wjw.pojo.vo.ItemOrderVO">
         SELECT
         isp.id,isp.item_id,isp.name,isp.stock,isp.discounts,isp.price_discount,isp.price_normal,
-        im.url,
+        im.url as img_url,
         it.item_name
         FROM
         items_spec isp

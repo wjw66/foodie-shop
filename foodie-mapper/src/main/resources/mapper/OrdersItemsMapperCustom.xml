@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wjw.mapper.OrderItemsMapperCustom" >
+
+<insert id="insertOrderItemsByList">
+insert into
+order_items
+(id,order_id,item_id,item_img,item_name,item_spec_id,item_spec_name,price,buy_counts)
+values
+<foreach collection="list" item="orderItems" separator="," index="index">
+    (#{orderItems.id},#{orderItems.orderId},
+    #{orderItems.itemId},#{orderItems.itemImg},#{orderItems.itemName},
+    #{orderItems.itemSpecId},#{orderItems.itemSpecName},#{orderItems.price},#{orderItems.buyCounts})
+</foreach>
+</insert>
+
+</mapper>

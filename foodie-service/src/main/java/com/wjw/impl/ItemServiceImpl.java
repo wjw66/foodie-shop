@@ -229,4 +229,20 @@ public class ItemServiceImpl implements ItemService {
         grid.setRecords(pageList.getTotal());
         return grid;
     }
+
+    /**
+     * 乐观锁扣库存
+     *
+     * @param specId  商品规格id
+     * @param buyCounts 购买件数
+     * @return
+     */
+    @Override
+    public int decreaseItemSpecStock(String specId, int buyCounts) {
+        int result = itemsMapperCustom.decreaseItemSpecStock(specId, buyCounts);
+        if (result != 1) {
+            throw new RuntimeException("订单创建失败，原因：库存不足!");
+        }
+        return result;
+    }
 }

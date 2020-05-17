@@ -3,11 +3,11 @@ package com.wjw.impl;
 import com.wjw.AddressService;
 import com.wjw.ItemService;
 import com.wjw.OrderService;
+import com.wjw.enums.OrderStatusEnum;
 import com.wjw.enums.YesOrNo;
-import com.wjw.mapper.ItemsSpecMapperCustom;
-import com.wjw.mapper.OrdersMapper;
-import com.wjw.pojo.ItemsSpec;
+import com.wjw.mapper.*;
 import com.wjw.pojo.OrderItems;
+import com.wjw.pojo.OrderStatus;
 import com.wjw.pojo.Orders;
 import com.wjw.pojo.UserAddress;
 import com.wjw.pojo.bo.SubmitOrderBO;
@@ -15,6 +15,7 @@ import com.wjw.pojo.vo.ItemOrderVO;
 import com.wjw.pojo.vo.OrderVO;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +25,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author : wjwjava01@163.com
  * @date : 22:01 2020/5/13
  * @description :
  */
+@Service
 public class OrderServiceImpl implements OrderService {
     @Resource
     private Sid sid;
@@ -42,6 +43,10 @@ public class OrderServiceImpl implements OrderService {
     private ItemService itemService;
     @Resource
     private ItemsSpecMapperCustom itemsSpecMapperCustom;
+    @Resource
+    private OrderItemsMapperCustom orderItemsMapperCustom;
+    @Resource
+    private OrderStatusMapper orderStatusMapper;
 
     /**
      * 用于创建订单相关信息
@@ -59,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
         String leftMsg = submitOrderBO.getLeftMsg();
         //包邮费用设置为0
         Integer postAmount = 0;
+        //生成订单id
         String orderId = sid.nextShort();
 
         UserAddress address = addressService.queryUserAddress(userId, addressId);
@@ -100,12 +106,13 @@ public class OrderServiceImpl implements OrderService {
         List<ItemOrderVO> itemsSpecs = itemsSpecMapperCustom.querySpecSpecIds(Arrays.asList(itemSpecIdArr));
         itemsSpecs.forEach(itemsSpec -> {
             // 2.1 根据规格id，查询规格的具体信息，主要获取价格
-            totalAmount.updateAndGet(v -> v +itemsSpec.getPriceNormal() * buyCounts);
+            totalAmount.updateAndGet(v -> v + itemsSpec.getPriceNormal() * buyCounts);
             realPayAmount.updateAndGet(v -> v + itemsSpec.getPriceDiscount() * buyCounts);
 
             // 2.2 构建商品信息以及商品图片参数
+            String subOrderId = sid.nextShort();
             OrderItems subOrderItems = new OrderItems();
-            subOrderItems.setId(sid.nextShort());
+            subOrderItems.setId(subOrderId);
             subOrderItems.setOrderId(orderId);
             subOrderItems.setItemId(itemsSpec.getItemId());
             subOrderItems.setItemName(itemsSpec.getItemName());
@@ -115,8 +122,22 @@ public class OrderServiceImpl implements OrderService {
             subOrderItems.setItemImg(itemsSpec.getImgUrl());
             subOrderItems.setBuyCounts(buyCounts);
             orderItems.add(subOrderItems);
+            //2.3 扣库存
+            itemService.decreaseItemSpecStock(itemsSpec.getId(), buyCounts);
         });
-        //保存订单数据到数据库
+        //保存子订单数据到数据库
+        orderItemsMapperCustom.insertOrderItemsByList(orderItems);
+        newOrder.setTotalAmount(Integer.valueOf(totalAmount.toString()));
+        newOrder.setRealPayAmount(Integer.valueOf(realPayAmount.toString()));
+        ordersMapper.insertSelective(newOrder);
+
+        //3. 保存订单状态
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setOrderId(orderId);
+        orderStatus.setOrderStatus(OrderStatusEnum.WAIT_PAY.type);
+        orderStatus.setCreatedTime(new Date());
+        orderStatusMapper.insertSelective(orderStatus);
+
 
         return null;
     }

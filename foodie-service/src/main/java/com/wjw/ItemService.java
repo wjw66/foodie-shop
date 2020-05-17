@@ -96,4 +96,12 @@ public interface ItemService {
      * @return
      */
     List<ShopCartVO> queryItemsBySpecIds(String specIds);
+
+    /**
+     * 乐观锁扣库存
+     * @param specId 商品规格id
+     * @param buyCounts 购买件数
+     * @return
+     */
+    int decreaseItemSpecStock(String specId,int buyCounts);
 }

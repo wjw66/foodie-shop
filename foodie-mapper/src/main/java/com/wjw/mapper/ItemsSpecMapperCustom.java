@@ -13,5 +13,10 @@ import java.util.List;
  */
 @Repository
 public interface ItemsSpecMapperCustom {
+    /**
+     * 通过规格id查询商品列表
+     * @param paramsList
+     * @return
+     */
     List<ItemOrderVO> querySpecSpecIds(@Param("paramsList") List<String> paramsList);
 }
