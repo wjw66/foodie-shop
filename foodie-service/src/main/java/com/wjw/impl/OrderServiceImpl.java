@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
     private OrdersMapper ordersMapper;
     @Resource
     private AddressService addressService;
-    @Autowired
+    @Resource
     private ItemService itemService;
     @Resource
     private ItemsSpecMapperCustom itemsSpecMapperCustom;
@@ -101,6 +101,7 @@ public class OrderServiceImpl implements OrderService {
         AtomicInteger totalAmount = new AtomicInteger(0);
         //商品实付价累计
         AtomicInteger realPayAmount = new AtomicInteger(0);
+
         // TODO 整合redis后，商品购买的数量重新从redis的购物车中获取
         int buyCounts = 1;
         List<OrderItems> orderItems = new ArrayList<>();
