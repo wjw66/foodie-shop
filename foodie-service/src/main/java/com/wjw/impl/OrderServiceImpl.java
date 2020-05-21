@@ -15,6 +15,8 @@ import com.wjw.pojo.Orders;
 import com.wjw.pojo.UserAddress;
 import com.wjw.pojo.bo.SubmitOrderBO;
 import com.wjw.pojo.vo.ItemOrderVO;
+import com.wjw.pojo.vo.MerchantOrdersVO;
+import com.wjw.pojo.vo.OrderVO;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,14 +61,14 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
-    public String createOrder(SubmitOrderBO submitOrderBO) {
+    public OrderVO createOrder(SubmitOrderBO submitOrderBO) {
         String userId = submitOrderBO.getUserId();
         String addressId = submitOrderBO.getAddressId();
         String itemSpecIds = submitOrderBO.getItemSpecIds();
         Integer payMethod = submitOrderBO.getPayMethod();
         String leftMsg = submitOrderBO.getLeftMsg();
         //包邮费用设置为0
-        Integer postAmount = 0;
+        int postAmount = 0;
         //生成订单id
         String orderId = sid.nextShort();
 
@@ -141,8 +143,14 @@ public class OrderServiceImpl implements OrderService {
         orderStatus.setCreatedTime(new Date());
         orderStatusMapper.insertSelective(orderStatus);
 
+        //4. 构建商户订单,用于传给支付中心
+        MerchantOrdersVO merchantOrdersVO = new MerchantOrdersVO();
+        merchantOrdersVO.setMerchantOrderId(orderId);
+        merchantOrdersVO.setMerchantUserId(userId);
+        merchantOrdersVO.setAmount(Integer.parseInt(realPayAmount.toString()) + postAmount);
+        merchantOrdersVO.setPayMethod(payMethod);
 
-        return orderId;
+        return new OrderVO(orderId,merchantOrdersVO);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.wjw;
 
 import com.wjw.pojo.bo.SubmitOrderBO;
+import com.wjw.pojo.vo.OrderVO;
 
 /**
  * @author : wjwjava01@163.com
@@ -14,7 +15,7 @@ public interface OrderService {
      * @param submitOrderBO
      * @return
      */
-    String createOrder(SubmitOrderBO submitOrderBO);
+    OrderVO createOrder(SubmitOrderBO submitOrderBO);
 
     /**
      * 修改订单状态

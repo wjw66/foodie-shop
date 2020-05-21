@@ -3,6 +3,8 @@ package com.wjw.controller;
 import com.wjw.OrderService;
 import com.wjw.enums.OrderStatusEnum;
 import com.wjw.pojo.bo.SubmitOrderBO;
+import com.wjw.pojo.vo.MerchantOrdersVO;
+import com.wjw.pojo.vo.OrderVO;
 import com.wjw.utils.JSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,7 +42,10 @@ public class OrdersController extends BaseController {
             return JSONResult.errorMsg("暂不支持此支付方式！");
         }
         //1.创建订单
-        String orderId = orderService.createOrder(submitOrderBO);
+        OrderVO orderVO = orderService.createOrder(submitOrderBO);
+        String orderId = orderVO.getOrderId();
+        MerchantOrdersVO merchantOrdersVO = orderVO.getMerchantOrdersVO();
+        merchantOrdersVO.setReturnUrl(payReturnUrl);
 
         // 2. 创建订单以后，移除购物车中已结算（已提交）的商品
         /**
@@ -61,7 +66,7 @@ public class OrdersController extends BaseController {
      * @param merchantOrderId 订单主表id
      * @return
      */
-    @PostMapping("notifyMerchantOrderPaid")
+    @PostMapping("/notifyMerchantOrderPaid")
     public Integer notifyMerchantOrderPaid(String merchantOrderId) {
         orderService.updateOrderStatus(merchantOrderId, OrderStatusEnum.WAIT_DELIVER.type);
         return HttpStatus.OK.value();
