@@ -1,5 +1,6 @@
 package com.wjw;
 
+import com.wjw.pojo.OrderStatus;
 import com.wjw.pojo.bo.SubmitOrderBO;
 import com.wjw.pojo.vo.OrderVO;
 
@@ -23,4 +24,11 @@ public interface OrderService {
      * @param orderStatus 状态枚举
      */
     void updateOrderStatus(String orderId, Integer orderStatus);
+
+    /**
+     * 查询订单状态
+     * @param orderId
+     * @return
+     */
+    OrderStatus queryOrderStatusInfo(String orderId);
 }
