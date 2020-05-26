@@ -4,6 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import java.util.Date;
 
+/**
+ * @author asus
+ */
 public class Users {
     /**
      * 主键id 用户id
