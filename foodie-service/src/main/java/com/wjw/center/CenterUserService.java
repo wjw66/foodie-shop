@@ -21,5 +21,5 @@ public interface CenterUserService {
      * @param userId
      * @param centerUserBO
      */
-    void updateUserInfo(String userId, CenterUserBO centerUserBO);
+    Users updateUserInfo(String userId, CenterUserBO centerUserBO);
 }
