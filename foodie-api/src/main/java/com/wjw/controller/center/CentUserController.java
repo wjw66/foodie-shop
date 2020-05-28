@@ -10,10 +10,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
+import static com.wjw.exception.BindingResultException.getErrors;
 
 /**
  * @author : wjwjava01@163.com
@@ -32,8 +37,16 @@ public class CentUserController {
     public JSONResult update(
             @ApiParam(name = "userId", value = "用户id", required = true)
             @RequestParam String userId,
-            @RequestBody CenterUserBO centUserBO,
+            @RequestBody @Validated CenterUserBO centUserBO,
+            BindingResult result,
             HttpServletRequest request, HttpServletResponse response) {
+
+        // 判断BindingResult是否保存错误的验证信息，如果有，则直接return
+        if (result.hasErrors()) {
+            Map<String, String> errorMap = getErrors(result);
+            return JSONResult.errorMap(errorMap);
+        }
+
 
         Users userResult = centerUserService.updateUserInfo(userId, centUserBO);
         //更新cookie信息
