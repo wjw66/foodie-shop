@@ -17,6 +17,7 @@ import com.wjw.pojo.bo.SubmitOrderBO;
 import com.wjw.pojo.vo.ItemOrderVO;
 import com.wjw.pojo.vo.MerchantOrdersVO;
 import com.wjw.pojo.vo.OrderVO;
+import com.wjw.utils.DateUtil;
 import org.n3r.idworker.Sid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -173,4 +174,39 @@ public class OrderServiceImpl implements OrderService {
     public OrderStatus queryOrderStatusInfo(String orderId) {
         return orderStatusMapper.selectByPrimaryKey(orderId);
     }
+
+    /**
+     * 关闭超时未支付的订单
+     */
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class,propagation = Propagation.REQUIRED)
+    public void closeOrder() {
+        //查询所有未支付的订单
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setOrderStatus(OrderStatusEnum.WAIT_PAY.type);
+        List<OrderStatus> orderStatusList = orderStatusMapper.select(orderStatus);
+
+        orderStatusList.forEach(order -> {
+            int days = DateUtil.daysBetween(order.getCreatedTime(), new Date());
+            if (days >= 1){
+                //如果订单时间大于等于1天
+                doCloseOrder(order.getOrderId());
+            }
+        });
+    }
+
+    /**
+     * 关闭订单交易
+     * @param orderId
+     */
+    @Transactional(rollbackFor = RuntimeException.class,propagation = Propagation.REQUIRED)
+    void doCloseOrder(String orderId){
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setOrderId(orderId);
+        orderStatus.setOrderStatus(OrderStatusEnum.CLOSE.type);
+        orderStatus.setCloseTime(new Date());
+
+        orderStatusMapper.updateByPrimaryKeySelective(orderStatus);
+    }
+
 }
