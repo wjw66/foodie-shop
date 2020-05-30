@@ -49,4 +49,23 @@ public class CenterUserServiceImpl implements CenterUserService {
         
         return queryByUserId(userId);
     }
+
+    /**
+     * 更新用户图片操作
+     *
+     * @param userId
+     * @param imgUrl
+     * @return
+     */
+    @Override
+    public Users updateUserFace(String userId, String imgUrl) {
+        Users users = new Users();
+        users.setId(userId);
+        users.setFace(imgUrl);
+        users.setUpdatedTime(new Date());
+
+        usersMapper.updateByPrimaryKeySelective(users);
+
+        return queryByUserId(userId);
+    }
 }

@@ -70,8 +70,8 @@ public class OrdersController extends BaseController {
         //3.向支付中心发送当前订单，用于保存支付中心的订单数据
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("", "");
-        headers.add("", "");
+        headers.add("imoocUserId", "7535150-1214455149");
+        headers.add("password", "98ir-0r3o-r0pv-vj2h");
 
         HttpEntity<MerchantOrdersVO> entity = new HttpEntity<>(merchantOrdersVO, headers);
         ResponseEntity<JSONResult> responseEntity = restTemplate.postForEntity(paymentUrl, entity, JSONResult.class);

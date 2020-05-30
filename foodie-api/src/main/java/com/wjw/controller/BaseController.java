@@ -6,6 +6,7 @@ import java.io.File;
 
 /**
  * 基础的Controller类
+ *
  * @author asus
  */
 @Controller
@@ -28,10 +29,11 @@ public class BaseController {
     /**
      * 用户上传头像的位置
      */
-    public static final String IMAGE_USER_FACE_LOCATION = File.separator + "workspaces" +
-                                                            File.separator + "images" +
-                                                            File.separator + "foodie" +
-                                                            File.separator + "faces";
+    public static final String IMAGE_USER_FACE_LOCATION =
+            File.separator + "workspaces"
+                    + File.separator + "images"
+                    + File.separator + "foodie"
+                    + File.separator + "faces";
 //    public static final String IMAGE_USER_FACE_LOCATION = "/workspaces/images/foodie/faces";
 
 //
