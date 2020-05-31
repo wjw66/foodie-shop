@@ -1,5 +1,6 @@
 package com.wjw.utils;
 
+import com.github.pagehelper.PageInfo;
 import lombok.Data;
 
 import java.util.List;
@@ -29,5 +30,17 @@ public class PagedGridResult {
 	 * 每行显示的内容
 	 */
 	private List<?> rows;
+
+	private PagedGridResult(){};
+
+	public static PagedGridResult pageUtils(List<?> list,Integer page){
+		PageInfo<?> pageInfo = new PageInfo<>(list);
+		PagedGridResult gridResult = new PagedGridResult();
+		gridResult.setPage(page);
+		gridResult.setRecords(pageInfo.getTotal());
+		gridResult.setTotal(pageInfo.getPages());
+		gridResult.setRows(list);
+		return gridResult;
+	}
 
 }

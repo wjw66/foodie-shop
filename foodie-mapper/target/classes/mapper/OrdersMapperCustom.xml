@@ -11,14 +11,12 @@
       <result column="orderStatus" property="orderStatus"/>
       <result column="isComment" property="isComment"/>
 
-    <collection property="subOrderItemList"
-                select="getSubItems"
-                column="orderId"
+    <collection property="subOrderItemList" select="getSubItems" column="orderId"
                 ofType="com.wjw.pojo.vo.MySubOrderItemVO">
       <result column="itemId" property="itemId"/>
       <result column="itemName" property="itemName"/>
       <result column="itemImg" property="itemImg"/>
-        <result column="itemSpecId" property="itemSpecId"/>
+<!--        <result column="itemSpecId" property="itemSpecId"/>-->
         <result column="itemSpecName" property="itemSpecName"/>
         <result column="buyCounts" property="buyCounts"/>
         <result column="price" property="price"/>
@@ -64,7 +62,6 @@
         order_items oi
       where
         oi.order_id = #{orderId}
-
     </select>
     
 
