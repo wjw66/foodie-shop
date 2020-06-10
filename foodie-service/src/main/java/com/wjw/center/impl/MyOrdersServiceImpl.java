@@ -10,6 +10,7 @@ import com.wjw.mapper.OrdersMapperCustom;
 import com.wjw.pojo.OrderStatus;
 import com.wjw.pojo.Orders;
 import com.wjw.pojo.vo.MyOrdersVO;
+import com.wjw.pojo.vo.OrderStatusCountsVO;
 import com.wjw.utils.PagedGridResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,6 +33,7 @@ public class MyOrdersServiceImpl implements MyOrdersService {
     private OrderStatusMapper orderStatusMapper;
     @Resource
     private OrdersMapper ordersMapper;
+
     /**
      * 分页查询我的订单列表
      *
@@ -44,17 +46,17 @@ public class MyOrdersServiceImpl implements MyOrdersService {
     @Override
     public PagedGridResult queryMyOrders(String userId, Integer orderStatus, Integer page, Integer pageSize) {
         Map<String, Object> map = new HashMap<>(16);
-        map.put("userId",userId);
-        if (Objects.nonNull(orderStatus)){
-            map.put("orderStatus",orderStatus);
+        map.put("userId", userId);
+        if (Objects.nonNull(orderStatus)) {
+            map.put("orderStatus", orderStatus);
         }
         PageHelper.startPage(page, pageSize);
         List<MyOrdersVO> myOrdersVOS = ordersMapperCustom.queryMyOrders(map);
 
-        return PagedGridResult.pageUtils(myOrdersVOS,page);
+        return PagedGridResult.pageUtils(myOrdersVOS, page);
     }
 
-    @Transactional(propagation= Propagation.REQUIRED,rollbackFor = RuntimeException.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
     @Override
     public void updateDeliverOrderStatus(String orderId) {
 
@@ -69,7 +71,8 @@ public class MyOrdersServiceImpl implements MyOrdersService {
 
         orderStatusMapper.updateByExampleSelective(updateOrder, example);
     }
-    @Transactional(propagation=Propagation.SUPPORTS)
+
+    @Transactional(propagation = Propagation.SUPPORTS)
 
     @Override
     public Orders queryMyOrder(String userId, String orderId) {
@@ -97,8 +100,8 @@ public class MyOrdersServiceImpl implements MyOrdersService {
 
         Example example = new Example(OrderStatus.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("orderId",orderId);
-        criteria.andEqualTo("orderStatus",OrderStatusEnum.WAIT_RECEIVE.type);
+        criteria.andEqualTo("orderId", orderId);
+        criteria.andEqualTo("orderStatus", OrderStatusEnum.WAIT_RECEIVE.type);
 
         int result = orderStatusMapper.updateByExampleSelective(orderStatus, example);
         return result == 1;
@@ -125,5 +128,54 @@ public class MyOrdersServiceImpl implements MyOrdersService {
         int result = ordersMapper.updateByExampleSelective(updateOrder, example);
 
         return result == 1;
+    }
+
+    /**
+     * 获取我的订单各状态相关数量
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public OrderStatusCountsVO getOrderStatusCounts(String userId) {
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("userId", userId);
+
+        map.put("orderStatus", OrderStatusEnum.WAIT_PAY.type);
+        int waitPayCounts = ordersMapperCustom.getMyOrderStatusCounts(map);
+
+        map.put("orderStatus", OrderStatusEnum.WAIT_DELIVER.type);
+        int waitDeliverCounts = ordersMapperCustom.getMyOrderStatusCounts(map);
+
+        map.put("orderStatus", OrderStatusEnum.WAIT_RECEIVE.type);
+        int waitReceiveCounts = ordersMapperCustom.getMyOrderStatusCounts(map);
+
+        map.put("orderStatus", OrderStatusEnum.SUCCESS.type);
+        map.put("isComment", YesOrNo.NO.type);
+        int waitCommentCounts = ordersMapperCustom.getMyOrderStatusCounts(map);
+
+        OrderStatusCountsVO orderStatusCountsVO = new OrderStatusCountsVO(
+                waitPayCounts, waitDeliverCounts
+                , waitReceiveCounts, waitCommentCounts);
+        return orderStatusCountsVO;
+    }
+
+    /**
+     * 分页查询订单动向
+     *
+     * @param userId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public PagedGridResult getOrdersTrend(String userId, Integer page, Integer pageSize) {
+        Map<String,Object> map = new HashMap<>(16);
+        map.put("userId",userId);
+
+        PageHelper.startPage(page,pageSize);
+        List<OrderStatus> myOrderTrend = ordersMapperCustom.getMyOrderTrend(map);
+
+        return PagedGridResult.pageUtils(myOrderTrend,page);
     }
 }

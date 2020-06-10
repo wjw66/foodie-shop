@@ -1,6 +1,7 @@
 package com.wjw.center;
 
 import com.wjw.pojo.Orders;
+import com.wjw.pojo.vo.OrderStatusCountsVO;
 import com.wjw.utils.PagedGridResult;
 
 /**
@@ -48,4 +49,20 @@ public interface MyOrdersService {
      * @return
      */
     boolean deleteOrder(String userId,String orderId);
+
+    /**
+     * 获取我的订单各状态相关数量
+     * @param userId
+     * @return
+     */
+    OrderStatusCountsVO getOrderStatusCounts(String userId);
+
+    /**
+     * 分页查询订单动向
+     * @param userId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PagedGridResult getOrdersTrend(String userId,Integer page,Integer pageSize);
 }
