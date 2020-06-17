@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author : wjwjava01@163.com
@@ -36,16 +37,16 @@ public class ShopCatController extends BaseController {
         if (StringUtils.isBlank(userId)) {
             return JSONResult.errorMsg("");
         }
-        String redisKey = FOODIE_SHOPCART + ":" + userId;
+        String shopCartKey = FOODIE_SHOPCART + ":" + userId;
         //前端用户在登录的情况后，添加商品到购物车，会同时在后端同步购物车到redis缓存
         //需要判断购物车中已存在这个商品,则累加购买数量
-        String shopCartJson = redisOperator.get(redisKey);
+        String shopCartJson = redisOperator.get(shopCartKey);
         List<ShopCartBO> shopCartBOList;
         if (StringUtils.isNotBlank(shopCartJson)) {
             shopCartBOList = JsonUtils.jsonToList(shopCartJson, ShopCartBO.class);
 
-            if (Objects.isNull(shopCartBOList)){
-                throw new AppException("购物车JSON转换异常",userId);
+            if (Objects.isNull(shopCartBOList)) {
+                throw new AppException("购物车JSON转换异常", userId);
             }
             // 判断购物车中是否存在已有商品，如果有的话counts累加
             boolean isHaving = false;
@@ -68,7 +69,7 @@ public class ShopCatController extends BaseController {
             shopCartBOList.add(shopcartBO);
         }
         //覆盖redis的购物车内容
-        redisOperator.set(redisKey, JsonUtils.objectToJson(shopCartBOList));
+        redisOperator.set(shopCartKey, JsonUtils.objectToJson(shopCartBOList));
 
         return JSONResult.ok();
     }
@@ -78,12 +79,24 @@ public class ShopCatController extends BaseController {
     public JSONResult del(@RequestParam String userId, @RequestParam String itemSpecId,
                           HttpServletRequest request, HttpServletResponse response) {
 
+
         if (StringUtils.isBlank(userId) || StringUtils.isBlank(itemSpecId)) {
             return JSONResult.errorMsg("参数不能为空");
         }
 
-        // TODO 用户在页面删除购物车中的商品数据，如果此时用户已经登录，则需要同步删除后端购物车中的商品
-
+        //用户在页面删除购物车中的商品数据，如果此时用户已经登录，则需要同步删除后端购物车中的商品
+        String shopCartKey = FOODIE_SHOPCART + ":" + userId;
+        String shopCartJson = redisOperator.get(shopCartKey);
+        if (StringUtils.isNotBlank(shopCartJson)) {
+            List<ShopCartBO> shopCartBOList = JsonUtils.jsonToList(shopCartJson, ShopCartBO.class);
+            //判断购物车中是否有商品,如果有则删除
+            assert shopCartBOList != null;
+            shopCartBOList = shopCartBOList.stream()
+                    .filter(shopCartBO -> !shopCartBO.getSpecId().equals(itemSpecId))
+                    .collect(Collectors.toList());
+            //覆盖原来的购物车
+            redisOperator.set(shopCartKey, JsonUtils.objectToJson(shopCartBOList));
+        }
 
         return JSONResult.ok();
     }

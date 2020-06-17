@@ -13,6 +13,7 @@ import com.wjw.pojo.OrderItems;
 import com.wjw.pojo.OrderStatus;
 import com.wjw.pojo.Orders;
 import com.wjw.pojo.UserAddress;
+import com.wjw.pojo.bo.ShopCartBO;
 import com.wjw.pojo.bo.SubmitOrderBO;
 import com.wjw.pojo.vo.ItemOrderVO;
 import com.wjw.pojo.vo.MerchantOrdersVO;
@@ -24,10 +25,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -61,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
-    public OrderVO createOrder(SubmitOrderBO submitOrderBO) {
+    public OrderVO createOrder(List<ShopCartBO> shopCartBOList, SubmitOrderBO submitOrderBO) {
         String userId = submitOrderBO.getUserId();
         String addressId = submitOrderBO.getAddressId();
         String itemSpecIds = submitOrderBO.getItemSpecIds();
@@ -103,14 +101,20 @@ public class OrderServiceImpl implements OrderService {
         AtomicInteger totalAmount = new AtomicInteger(0);
         //商品实付价累计
         AtomicInteger realPayAmount = new AtomicInteger(0);
+        //用于创建订单完成后清除购物车操作
+        List<ShopCartBO> toBeRemovedShopCartList = new ArrayList<>();
 
-        // TODO 整合redis后，商品购买的数量重新从redis的购物车中获取
-        int buyCounts = 1;
         List<OrderItems> orderItems = new ArrayList<>();
         //2.循环根据itemSpecIds保存订单商品信息表
         String[] itemSpecIdArr = itemSpecIds.split(",");
         List<ItemOrderVO> itemsSpecs = itemsSpecMapperCustom.querySpecSpecIds(Arrays.asList(itemSpecIdArr));
         itemsSpecs.forEach(itemsSpec -> {
+            //整合redis后，商品购买的数量重新从redis的购物车中获取
+            ShopCartBO shopCartBO = getByCountFromShopCart(shopCartBOList, itemSpecIds);
+
+            assert shopCartBO != null;
+            int buyCounts = shopCartBO.getBuyCounts();
+            toBeRemovedShopCartList.add(shopCartBO);
             // 2.1 根据规格id，查询规格的具体信息，主要获取价格
             totalAmount.updateAndGet(v -> v + itemsSpec.getPriceNormal() * buyCounts);
             realPayAmount.updateAndGet(v -> v + itemsSpec.getPriceDiscount() * buyCounts);
@@ -151,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
         merchantOrdersVO.setAmount(Integer.parseInt(realPayAmount.toString()) + postAmount);
         merchantOrdersVO.setPayMethod(payMethod);
 
-        return new OrderVO(orderId,merchantOrdersVO);
+        return new OrderVO(orderId,merchantOrdersVO,toBeRemovedShopCartList);
     }
 
     /**
@@ -179,7 +183,7 @@ public class OrderServiceImpl implements OrderService {
      * 关闭超时未支付的订单
      */
     @Override
-    @Transactional(rollbackFor = RuntimeException.class,propagation = Propagation.REQUIRED)
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
     public void closeOrder() {
         //查询所有未支付的订单
         OrderStatus orderStatus = new OrderStatus();
@@ -188,7 +192,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderStatusList.forEach(order -> {
             int days = DateUtil.daysBetween(order.getCreatedTime(), new Date());
-            if (days >= 1){
+            if (days >= 1) {
                 //如果订单时间大于等于1天
                 doCloseOrder(order.getOrderId());
             }
@@ -197,10 +201,11 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 关闭订单交易
+     *
      * @param orderId
      */
-    @Transactional(rollbackFor = RuntimeException.class,propagation = Propagation.REQUIRED)
-    void doCloseOrder(String orderId){
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
+    void doCloseOrder(String orderId) {
         OrderStatus orderStatus = new OrderStatus();
         orderStatus.setOrderId(orderId);
         orderStatus.setOrderStatus(OrderStatusEnum.CLOSE.type);
@@ -209,4 +214,19 @@ public class OrderServiceImpl implements OrderService {
         orderStatusMapper.updateByPrimaryKeySelective(orderStatus);
     }
 
+    /**
+     * 从redis的购物车中获取商品信息
+     *
+     * @param shopCartBOList
+     * @param specId
+     * @return
+     */
+    private ShopCartBO getByCountFromShopCart(List<ShopCartBO> shopCartBOList, String specId) {
+        for (ShopCartBO shopCartBO : shopCartBOList) {
+            if (shopCartBO.getSpecId().equals(specId)) {
+                return shopCartBO;
+            }
+        }
+        return null;
+    }
 }
