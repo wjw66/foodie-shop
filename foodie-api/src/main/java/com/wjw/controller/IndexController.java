@@ -63,11 +63,11 @@ public class IndexController {
     @GetMapping("/cats")
     public JSONResult cats() {
         String cats = redisOperator.get("cats");
-        if (StringUtils.isNoneBlank(cats)){
-            return JSONResult.ok(JsonUtils.jsonToList(cats,Category.class));
+        if (StringUtils.isNoneBlank(cats)) {
+            return JSONResult.ok(JsonUtils.jsonToList(cats, Category.class));
         }
         List<Category> carousels = categoryService.queryAllRootLevelCat();
-        redisOperator.set("cats",JsonUtils.objectToJson(carousels));
+        redisOperator.set("cats", JsonUtils.objectToJson(carousels));
         return JSONResult.ok(carousels);
     }
 
@@ -78,15 +78,18 @@ public class IndexController {
         if (rootCatId == null) {
             return JSONResult.errorMsg("分类不存在");
         }
-        String subCat = redisOperator.get("subCat:" + rootCatId);
-        if (StringUtils.isNoneBlank(subCat)){
-            return JSONResult.ok(JsonUtils.jsonToList(subCat,CategoryVO.class));
+        String subCatKey = "subCat:" + rootCatId;
+        String subCat = redisOperator.get(subCatKey);
+        if (StringUtils.isNoneBlank(subCat)) {
+            return JSONResult.ok(JsonUtils.jsonToList(subCat, CategoryVO.class));
         }
 
         List<CategoryVO> list = categoryService.getSubCatList(rootCatId);
-        redisOperator.set("subCat" + rootCatId,JsonUtils.objectToJson(list));
+        redisOperator.set("subCat" + rootCatId, JsonUtils.objectToJson(list));
         return JSONResult.ok(list);
     }
+
+
     @ApiOperation(value = "查询每个一级分类下的最新6条商品数据", httpMethod = "GET")
     @GetMapping("/sixNewItems/{rootCatId}")
     public JSONResult sixNewItems(
