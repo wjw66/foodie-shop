@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -149,10 +150,30 @@ public class PassportController extends BaseController{
             }
             return;
         }
-        //redis不为空
+        //redis不为空 且cookie不为空
         if (StringUtils.isNotBlank(cookieShopCar)) {
+            //1.已经存在的,把cookie购物车的商品数量覆盖redis的
             List<ShopCartBO> shopCartBOList = JsonUtils.jsonToList(redisShopCartJson, ShopCartBO.class);
+            List<ShopCartBO> cookieShopCarList = JsonUtils.jsonToList(cookieShopCar, ShopCartBO.class);
 
+            //定义一个待删除list
+            List<ShopCartBO> pendingDeleteList = new ArrayList<>();
+            for (ShopCartBO shopCartBO : shopCartBOList) {
+                for (ShopCartBO cartBO : cookieShopCarList) {
+                    if (shopCartBO.getSpecId().equals(cartBO.getSpecId())){
+                        shopCartBO.setBuyCounts(cartBO.getBuyCounts());
+                        ////2.该商品标记为待删除,统一放入待删除的list,预删除cookie中同步后的数据
+                        pendingDeleteList.add(cartBO);
+                    }
+                }
+            }
+            //3.从cookie中清理所有待删除list
+            cookieShopCarList.removeAll(pendingDeleteList);
+            //4.合并redis和cookie的数据
+            shopCartBOList.addAll(cookieShopCarList);
+            //5.更新到redis和cookie中
+            CookieUtils.setCookie(request,response,FOODIE_SHOPCART,JsonUtils.objectToJson(shopCartBOList));
+            redisOperator.set(shopCartKey,JsonUtils.objectToJson(shopCartBOList));
         }else {
             CookieUtils.setCookie(request,response,FOODIE_SHOPCART,redisShopCartJson);
         }
@@ -170,7 +191,8 @@ public class PassportController extends BaseController{
         // 清除用户的相关信息的cookie
         CookieUtils.deleteCookie(request, response, "user");
 
-        // TODO 用户退出登录，需要清空购物车
+        //用户退出登录，需要清空cookie购物车
+        CookieUtils.deleteCookie(request, response, FOODIE_SHOPCART);
         // TODO 分布式会话中需要清除用户数据
 
         return JSONResult.ok();
