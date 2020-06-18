@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -101,6 +102,55 @@ public class IndexController {
         }
 
         List<NewItemsVO> list = categoryService.getSixNewItemsLazy(rootCatId);
+        return JSONResult.ok(list);
+    }
+    @GetMapping("/index")
+    public JSONResult demo(){
+        class demo{
+            Integer year;
+            String item;
+            Integer month;
+
+            public Integer getYear() {
+                return year;
+            }
+
+            public void setYear(Integer year) {
+                this.year = year;
+            }
+
+            public String getItem() {
+                return item;
+            }
+
+            public void setItem(String item) {
+                this.item = item;
+            }
+
+            public Integer getMonth() {
+                return month;
+            }
+
+            public void setMonth(Integer month) {
+                this.month = month;
+            }
+
+            public demo(Integer year, String item, Integer month) {
+                this.year = year;
+                this.item = item;
+                this.month = month;
+            }
+        }
+        List<demo> list = new ArrayList<>();
+        int j = 2017;
+        for (int i = 0; i < 12; i++) {
+
+            demo demo = new demo(j, "KPI", i);
+            list.add(demo);
+            if (j < 2021) {
+                j++;
+            }
+        }
         return JSONResult.ok(list);
     }
 }
