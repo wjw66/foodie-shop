@@ -1,0 +1,18 @@
+server:
+  port: 8088
+  tomcat:
+    uri-encoding: UTF-8
+  max-http-header-size: 80KB
+
+spring:
+  datasource:                                           # 数据源的相关配置
+    url: jdbc:mysql://120.27.251.210:33306/foodie-shop?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true
+    password: 123456
+  redis:
+    database: 1
+    host: 120.27.251.210
+    port: 6379
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 控制台打印sql

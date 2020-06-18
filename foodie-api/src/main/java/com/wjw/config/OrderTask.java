@@ -1,7 +1,6 @@
 package com.wjw.config;
 
 import com.wjw.OrderService;
-import com.wjw.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,5 @@ public class OrderTask {
     @Scheduled(cron = "0/59 * * * * ? ")
     public void autoCloseOrder(){
         orderService.closeOrder();
-        System.out.println("执行定时任务,当前时间为: "
-                + DateUtil.getCurrentDateString(DateUtil.DATETIME_PATTERN));
     }
 }

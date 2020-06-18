@@ -1,7 +1,6 @@
 package com.wjw.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.wjw.ItemService;
 import com.wjw.enums.CommentLevel;
 import com.wjw.mapper.*;
@@ -143,7 +142,7 @@ public class ItemServiceImpl implements ItemService {
                 (DesensitizationUtil.commonDisplay(itemCommentVO.getNickname()))
         );
 
-        return setterPagedGrid(list, page);
+        return PagedGridResult.pageUtils(list,page);
     }
 
     /**
@@ -163,7 +162,7 @@ public class ItemServiceImpl implements ItemService {
         PageHelper.startPage(page,pageSize);
         List<SearchItemsVO> list = itemsMapperCustom.searchItems(map);
 
-        return setterPagedGrid(list,page);
+        return PagedGridResult.pageUtils(list,page);
     }
 
     /**
@@ -184,7 +183,7 @@ public class ItemServiceImpl implements ItemService {
         PageHelper.startPage(page, pageSize);
         List<SearchItemsVO> list = itemsMapperCustom.searchItemsByThirdCat(map);
 
-        return setterPagedGrid(list, page);
+        return PagedGridResult.pageUtils(list,page);
     }
 
     /**
@@ -213,22 +212,6 @@ public class ItemServiceImpl implements ItemService {
         return itemsCommentsMapper.selectCount(itemsComments);
     }
 
-    /**
-     * 封装分页对象
-     *
-     * @param list list集合
-     * @param page 当前第几页
-     * @return
-     */
-    private PagedGridResult setterPagedGrid(List<?> list, Integer page) {
-        PageInfo<?> pageList = new PageInfo<>(list);
-        PagedGridResult grid = new PagedGridResult();
-        grid.setPage(page);
-        grid.setRows(list);
-        grid.setTotal(pageList.getPages());
-        grid.setRecords(pageList.getTotal());
-        return grid;
-    }
 
     /**
      * 乐观锁扣库存

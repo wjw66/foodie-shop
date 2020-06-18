@@ -8,9 +8,12 @@ import com.wjw.pojo.Category;
 import com.wjw.pojo.vo.CategoryVO;
 import com.wjw.pojo.vo.NewItemsVO;
 import com.wjw.utils.JSONResult;
+import com.wjw.utils.JsonUtils;
+import com.wjw.utils.RedisOperator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,11 +35,22 @@ public class IndexController {
     private CarouselService carouselService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private RedisOperator redisOperator;
 
     @ApiOperation(value = "获取首页轮播图列表")
     @GetMapping("/carousel")
     public JSONResult carousel() {
-        List<Carousel> carousels = carouselService.queryAll(YesOrNo.YES.type);
+        List<Carousel> carousels;
+        String carousel = redisOperator.get("carousel");
+
+        if (StringUtils.isNoneBlank(carousel)) {
+            carousels = JsonUtils.jsonToList(carousel, Carousel.class);
+            return JSONResult.ok(carousels);
+        }
+        carousels = carouselService.queryAll(YesOrNo.YES.type);
+        redisOperator.set("carousel", JsonUtils.objectToJson(carousels));
+
         return JSONResult.ok(carousels);
     }
 
@@ -48,7 +62,12 @@ public class IndexController {
     @ApiOperation(value = "获取商品分类(一级分类)")
     @GetMapping("/cats")
     public JSONResult cats() {
+        String cats = redisOperator.get("cats");
+        if (StringUtils.isNoneBlank(cats)) {
+            return JSONResult.ok(JsonUtils.jsonToList(cats, Category.class));
+        }
         List<Category> carousels = categoryService.queryAllRootLevelCat();
+        redisOperator.set("cats", JsonUtils.objectToJson(carousels));
         return JSONResult.ok(carousels);
     }
 
@@ -59,10 +78,18 @@ public class IndexController {
         if (rootCatId == null) {
             return JSONResult.errorMsg("分类不存在");
         }
+        String subCatKey = "subCat:" + rootCatId;
+        String subCat = redisOperator.get(subCatKey);
+        if (StringUtils.isNoneBlank(subCat)) {
+            return JSONResult.ok(JsonUtils.jsonToList(subCat, CategoryVO.class));
+        }
 
         List<CategoryVO> list = categoryService.getSubCatList(rootCatId);
+        redisOperator.set("subCat" + rootCatId, JsonUtils.objectToJson(list));
         return JSONResult.ok(list);
     }
+
+
     @ApiOperation(value = "查询每个一级分类下的最新6条商品数据", httpMethod = "GET")
     @GetMapping("/sixNewItems/{rootCatId}")
     public JSONResult sixNewItems(

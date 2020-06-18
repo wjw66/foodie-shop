@@ -1,11 +1,16 @@
 package com.wjw.controller;
 
+import com.wjw.center.MyOrdersService;
+import com.wjw.pojo.Orders;
+import com.wjw.utils.JSONResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
 
 /**
  * 基础的Controller类
+ *
  * @author asus
  */
 @Controller
@@ -28,25 +33,26 @@ public class BaseController {
     /**
      * 用户上传头像的位置
      */
-    public static final String IMAGE_USER_FACE_LOCATION = File.separator + "workspaces" +
-                                                            File.separator + "images" +
-                                                            File.separator + "foodie" +
-                                                            File.separator + "faces";
+    public static final String IMAGE_USER_FACE_LOCATION =
+            File.separator + "workspaces"
+                    + File.separator + "images"
+                    + File.separator + "foodie"
+                    + File.separator + "faces";
 //    public static final String IMAGE_USER_FACE_LOCATION = "/workspaces/images/foodie/faces";
 
-//
-//    @Autowired
-//    public MyOrdersService myOrdersService;
-//
-//    /**
-//     * 用于验证用户和订单是否有关联关系，避免非法用户调用
-//     * @return
-//     */
-//    public JSONResult checkUserOrder(String userId, String orderId) {
-//        Orders order = myOrdersService.queryMyOrder(userId, orderId);
-//        if (order == null) {
-//            return JSONResult.errorMsg("订单不存在！");
-//        }
-//        return JSONResult.ok(order);
-//    }
+    @Autowired
+    public MyOrdersService myOrdersService;
+
+    /**
+     * 用于验证用户和订单是否有关联关系，避免非法用户调用
+     * @return
+     */
+    public JSONResult checkUserOrder(String userId, String orderId) {
+
+        Orders order = myOrdersService.queryMyOrder(userId, orderId);
+        if (order == null) {
+            return JSONResult.errorMsg("订单不存在！");
+        }
+        return JSONResult.ok(order);
+    }
 }

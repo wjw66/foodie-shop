@@ -1,8 +1,11 @@
 package com.wjw;
 
 import com.wjw.pojo.OrderStatus;
+import com.wjw.pojo.bo.ShopCartBO;
 import com.wjw.pojo.bo.SubmitOrderBO;
 import com.wjw.pojo.vo.OrderVO;
+
+import java.util.List;
 
 /**
  * @author : wjwjava01@163.com
@@ -14,9 +17,10 @@ public interface OrderService {
     /**
      * 用于创建订单相关信息
      * @param submitOrderBO
+     * @param shopCartBOList
      * @return
      */
-    OrderVO createOrder(SubmitOrderBO submitOrderBO);
+    OrderVO createOrder(List<ShopCartBO> shopCartBOList, SubmitOrderBO submitOrderBO);
 
     /**
      * 修改订单状态
