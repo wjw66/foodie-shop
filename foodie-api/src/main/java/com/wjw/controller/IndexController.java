@@ -85,7 +85,7 @@ public class IndexController {
         }
 
         List<CategoryVO> list = categoryService.getSubCatList(rootCatId);
-        redisOperator.set("subCat" + rootCatId, JsonUtils.objectToJson(list));
+        redisOperator.set("subCat:" + rootCatId, JsonUtils.objectToJson(list));
         return JSONResult.ok(list);
     }
 
