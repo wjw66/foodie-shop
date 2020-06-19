@@ -5,6 +5,7 @@ import com.wjw.pojo.Users;
 import com.wjw.pojo.bo.ShopCartBO;
 import com.wjw.pojo.bo.UserBO;
 import com.wjw.pojo.vo.UserVO;
+import com.wjw.pojo.vo.UsersVO;
 import com.wjw.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author : wjwjava01@163.com
@@ -27,7 +29,7 @@ import java.util.List;
 @Api(value = "注册登录", tags = {"用于注册登录的相关接口"})
 @RestController
 @RequestMapping("passport")
-public class PassportController extends BaseController{
+public class PassportController extends BaseController {
     @Resource
     private UserService userService;
     @Autowired
@@ -75,11 +77,13 @@ public class PassportController extends BaseController{
         UserVO userResult = new UserVO();
         BeanUtils.copyProperties(user, userResult);
 
+        UsersVO usersVO = getUsersVO(userResult);
+
         //将user信息设置到Cookie中,并加密
         CookieUtils.setCookie(request, response, "user",
-                JsonUtils.objectToJson(userResult), true);
+                JsonUtils.objectToJson(usersVO), true);
         //同步购物车
-        syncShopCartData(userResult.getId(),request,response);
+        syncShopCartData(userResult.getId(), request, response);
         return JSONResult.ok(user);
     }
 
@@ -117,15 +121,32 @@ public class PassportController extends BaseController{
         UserVO userResult = new UserVO();
         BeanUtils.copyProperties(user, userResult);
 
+        //生成用户token，存入redis会话
+        UsersVO usersVO = getUsersVO(userResult);
         //将user信息设置到Cookie中,并加密
         CookieUtils.setCookie(request, response, "user",
-                JsonUtils.objectToJson(userResult), true);
+                JsonUtils.objectToJson(usersVO), true);
 
-
-        // TODO 生成用户token，存入redis会话
         //同步购物车数据
-        syncShopCartData(userResult.getId(),request,response);
+        syncShopCartData(userResult.getId(), request, response);
         return JSONResult.ok(userResult);
+    }
+
+    /**
+     * 将用户回话存入redis并返回VO存到cookie中
+     *
+     * @param userResult
+     * @return
+     */
+    private UsersVO getUsersVO(UserVO userResult) {
+        String redisUserToken = REDIS_USER_TOKEN + ":" + userResult.getId();
+        String uniqueToken = UUID.randomUUID().toString().trim();
+        redisOperator.set(redisUserToken, uniqueToken);
+        //token存入到cookie中
+        UsersVO usersVO = new UsersVO();
+        BeanUtils.copyProperties(userResult, usersVO);
+        usersVO.setUserUniqueToken(uniqueToken);
+        return usersVO;
     }
 
     /**
@@ -135,7 +156,7 @@ public class PassportController extends BaseController{
      * 如果cookie中某商品在redis中存在,以cookie为主,删除redis的数据,把cookie中的覆盖到redis中(参考京东)
      * 3.同步redis后,覆盖本地cookie购物车数据,保证两者一致性
      */
-    private void syncShopCartData(String userId,HttpServletRequest request,
+    private void syncShopCartData(String userId, HttpServletRequest request,
                                   HttpServletResponse response) {
         //1.获取redis中的数据
         String shopCartKey = FOODIE_SHOPCART + ":" + userId;
@@ -143,10 +164,10 @@ public class PassportController extends BaseController{
         //2.获取cookie中的数据
         String cookieShopCar = CookieUtils.getCookieValue(request, FOODIE_SHOPCART, true);
         //3.执行业务逻辑
-            //redis为空
+        //redis为空
         if (StringUtils.isBlank(redisShopCartJson)) {
             if (StringUtils.isNotBlank(cookieShopCar)) {
-                redisOperator.set(shopCartKey,cookieShopCar);
+                redisOperator.set(shopCartKey, cookieShopCar);
             }
             return;
         }
@@ -160,7 +181,7 @@ public class PassportController extends BaseController{
             List<ShopCartBO> pendingDeleteList = new ArrayList<>();
             for (ShopCartBO shopCartBO : shopCartBOList) {
                 for (ShopCartBO cartBO : cookieShopCarList) {
-                    if (shopCartBO.getSpecId().equals(cartBO.getSpecId())){
+                    if (shopCartBO.getSpecId().equals(cartBO.getSpecId())) {
                         shopCartBO.setBuyCounts(cartBO.getBuyCounts());
                         ////2.该商品标记为待删除,统一放入待删除的list,预删除cookie中同步后的数据
                         pendingDeleteList.add(cartBO);
@@ -172,12 +193,11 @@ public class PassportController extends BaseController{
             //4.合并redis和cookie的数据
             shopCartBOList.addAll(cookieShopCarList);
             //5.更新到redis和cookie中
-            CookieUtils.setCookie(request,response,FOODIE_SHOPCART,JsonUtils.objectToJson(shopCartBOList));
-            redisOperator.set(shopCartKey,JsonUtils.objectToJson(shopCartBOList));
-        }else {
-            CookieUtils.setCookie(request,response,FOODIE_SHOPCART,redisShopCartJson);
+            CookieUtils.setCookie(request, response, FOODIE_SHOPCART, JsonUtils.objectToJson(shopCartBOList));
+            redisOperator.set(shopCartKey, JsonUtils.objectToJson(shopCartBOList));
+        } else {
+            CookieUtils.setCookie(request, response, FOODIE_SHOPCART, redisShopCartJson);
         }
-
 
 
     }
@@ -193,8 +213,8 @@ public class PassportController extends BaseController{
 
         //用户退出登录，需要清空cookie购物车
         CookieUtils.deleteCookie(request, response, FOODIE_SHOPCART);
-        // TODO 分布式会话中需要清除用户数据
-
+        //分布式会话中需要清除用户数据
+        redisOperator.del(REDIS_USER_TOKEN + ":" + userId);
         return JSONResult.ok();
     }
 
