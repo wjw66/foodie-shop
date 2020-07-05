@@ -4,13 +4,11 @@ import com.wjw.UserService;
 import com.wjw.pojo.Users;
 import com.wjw.pojo.bo.ShopCartBO;
 import com.wjw.pojo.bo.UserBO;
-import com.wjw.pojo.vo.UserVO;
 import com.wjw.pojo.vo.UsersVO;
 import com.wjw.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author : wjwjava01@163.com
@@ -71,12 +68,9 @@ public class PassportController extends BaseController {
         }
 
         //4.实现注册
-        Users user = userService.createUser(userBO);
+        Users userResult = userService.createUser(userBO);
 
         //5.实现注册完成自动登录
-        UserVO userResult = new UserVO();
-        BeanUtils.copyProperties(user, userResult);
-
         UsersVO usersVO = getUsersVO(userResult);
 
         //将user信息设置到Cookie中,并加密
@@ -84,7 +78,7 @@ public class PassportController extends BaseController {
                 JsonUtils.objectToJson(usersVO), true);
         //同步购物车
         syncShopCartData(userResult.getId(), request, response);
-        return JSONResult.ok(user);
+        return JSONResult.ok(usersVO);
     }
 
     /**
@@ -111,15 +105,13 @@ public class PassportController extends BaseController {
         }
 
         // 1. 实现登录
-        Users user = userService.queryUserForLogin(username,
+        Users userResult = userService.queryUserForLogin(username,
                 MD5Utils.getMD5Str(password));
 
-        if (user == null) {
+        if (userResult == null) {
             return JSONResult.errorMsg("用户名或密码不正确");
         }
 
-        UserVO userResult = new UserVO();
-        BeanUtils.copyProperties(user, userResult);
 
         //生成用户token，存入redis会话
         UsersVO usersVO = getUsersVO(userResult);
@@ -132,22 +124,7 @@ public class PassportController extends BaseController {
         return JSONResult.ok(userResult);
     }
 
-    /**
-     * 将用户回话存入redis并返回VO存到cookie中
-     *
-     * @param userResult
-     * @return
-     */
-    private UsersVO getUsersVO(UserVO userResult) {
-        String redisUserToken = REDIS_USER_TOKEN + ":" + userResult.getId();
-        String uniqueToken = UUID.randomUUID().toString().trim();
-        redisOperator.set(redisUserToken, uniqueToken);
-        //token存入到cookie中
-        UsersVO usersVO = new UsersVO();
-        BeanUtils.copyProperties(userResult, usersVO);
-        usersVO.setUserUniqueToken(uniqueToken);
-        return usersVO;
-    }
+
 
     /**
      * 登陆后,同步cookie和redis中的数据
@@ -183,7 +160,7 @@ public class PassportController extends BaseController {
                 for (ShopCartBO cartBO : cookieShopCarList) {
                     if (shopCartBO.getSpecId().equals(cartBO.getSpecId())) {
                         shopCartBO.setBuyCounts(cartBO.getBuyCounts());
-                        ////2.该商品标记为待删除,统一放入待删除的list,预删除cookie中同步后的数据
+                        //2.该商品标记为待删除,统一放入待删除的list,预删除cookie中同步后的数据
                         pendingDeleteList.add(cartBO);
                     }
                 }

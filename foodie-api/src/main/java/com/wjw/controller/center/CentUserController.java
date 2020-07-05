@@ -4,6 +4,7 @@ import com.wjw.center.CenterUserService;
 import com.wjw.controller.BaseController;
 import com.wjw.pojo.Users;
 import com.wjw.pojo.bo.center.CenterUserBO;
+import com.wjw.pojo.vo.UsersVO;
 import com.wjw.resource.FileUpload;
 import com.wjw.utils.CookieUtils;
 import com.wjw.utils.JSONResult;
@@ -108,11 +109,12 @@ public class CentUserController extends BaseController {
         String finalFaceUrl = faceImgServerUrl + uploadPathPrefix;
         Users userResult = centerUserService.updateUserFace(userId, finalFaceUrl);
 
+        //增加token令牌，会整合进redis，使用分布式会话
+        UsersVO usersVO = getUsersVO(userResult);
         //更新cookie信息
-        setNullProperty(userResult);
         CookieUtils.setCookie(request, response, "user",
-                JsonUtils.objectToJson(userResult), true);
-        //TODO 后续会增加token令牌，会整合进redis，使用分布式会话
+                JsonUtils.objectToJson(usersVO), true);
+
         return JSONResult.ok();
     }
 
@@ -133,11 +135,13 @@ public class CentUserController extends BaseController {
 
 
         Users userResult = centerUserService.updateUserInfo(userId, centUserBO);
+        //增加token令牌，会整合进redis，使用分布式会话
+        UsersVO usersVO = getUsersVO(userResult);
+
         //更新cookie信息
-        setNullProperty(userResult);
         CookieUtils.setCookie(request, response, "user",
-                JsonUtils.objectToJson(userResult), true);
-        //TODO 后续会增加token令牌，会整合进redis，使用分布式会话
+                JsonUtils.objectToJson(usersVO), true);
+
         return JSONResult.ok();
     }
 

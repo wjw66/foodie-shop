@@ -2,11 +2,16 @@ package com.wjw.controller;
 
 import com.wjw.center.MyOrdersService;
 import com.wjw.pojo.Orders;
+import com.wjw.pojo.Users;
+import com.wjw.pojo.vo.UsersVO;
 import com.wjw.utils.JSONResult;
+import com.wjw.utils.RedisOperator;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
+import java.util.UUID;
 
 /**
  * 基础的Controller类
@@ -15,6 +20,10 @@ import java.io.File;
  */
 @Controller
 public class BaseController {
+    @Autowired
+    public MyOrdersService myOrdersService;
+    @Autowired
+    private RedisOperator redisOperator;
 
     public static final String FOODIE_SHOPCART = "shopcart";
 
@@ -41,8 +50,6 @@ public class BaseController {
                     + File.separator + "faces";
 //    public static final String IMAGE_USER_FACE_LOCATION = "/workspaces/images/foodie/faces";
 
-    @Autowired
-    public MyOrdersService myOrdersService;
 
     /**
      * 用于验证用户和订单是否有关联关系，避免非法用户调用
@@ -55,5 +62,21 @@ public class BaseController {
             return JSONResult.errorMsg("订单不存在！");
         }
         return JSONResult.ok(order);
+    }
+    /**
+     * 将用户回话存入redis并返回VO存到cookie中
+     *
+     * @param userResult
+     * @return
+     */
+    public UsersVO getUsersVO(Users userResult) {
+        String redisUserToken = REDIS_USER_TOKEN + ":" + userResult.getId();
+        String uniqueToken = UUID.randomUUID().toString().trim();
+        redisOperator.set(redisUserToken, uniqueToken);
+        //token存入到cookie中
+        UsersVO usersVO = new UsersVO();
+        BeanUtils.copyProperties(userResult, usersVO);
+        usersVO.setUserUniqueToken(uniqueToken);
+        return usersVO;
     }
 }
