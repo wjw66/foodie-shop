@@ -43,15 +43,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     /**
      * 将UserTokenInterceptor注册成一个bean,相当于spring的xml中的bean标签
+     *
      * @return
      */
     @Bean
-    public UserTokenInterceptor userTokenInterceptor(){
+    public UserTokenInterceptor userTokenInterceptor() {
         return new UserTokenInterceptor();
     }
 
     /**
      * 注册拦截器
+     *
      * @param registry
      */
     @Override
@@ -59,7 +61,21 @@ public class WebMvcConfig implements WebMvcConfigurer {
         //添加拦截器
         registry.addInterceptor(userTokenInterceptor())
                 //添加要拦截的路径
-                .addPathPatterns("/hello");
+                .addPathPatterns("/hello")
+                .addPathPatterns("/shopcart/add")
+                .addPathPatterns("/shopcart/del")
+                .addPathPatterns("/address/list")
+                .addPathPatterns("/address/add")
+                .addPathPatterns("/address/update")
+                .addPathPatterns("/address/setDefalut")
+                .addPathPatterns("/address/delete")
+                .addPathPatterns("/orders/*")
+                .addPathPatterns("/center/*")
+                .addPathPatterns("/userInfo/*")
+                .addPathPatterns("/myorders/*")
+                .addPathPatterns("/mycomments/*")
+                .excludePathPatterns("/myorders/deliver")
+                .excludePathPatterns("/orders/notifyMerchantOrderPaid");
         //将registry注册到mvc中
         WebMvcConfigurer.super.addInterceptors(registry);
     }
