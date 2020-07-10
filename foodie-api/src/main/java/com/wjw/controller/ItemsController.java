@@ -9,7 +9,7 @@ import com.wjw.pojo.vo.CommentLevelCountsVO;
 import com.wjw.pojo.vo.ItemInfoVO;
 import com.wjw.pojo.vo.ShopCartVO;
 import com.wjw.utils.JSONResult;
-import com.wjw.utils.PagedGridResult;
+import com.wjw.utils.PageResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -82,7 +82,7 @@ public class ItemsController {
             return JSONResult.errorMsg(null);
         }
 
-        PagedGridResult grid = itemService.queryPagedComments(itemId,level,page,pageSize);
+        PageResult grid = itemService.queryPagedComments(itemId,level,page,pageSize);
 
         return JSONResult.ok(grid);
     }
@@ -103,7 +103,7 @@ public class ItemsController {
             return JSONResult.errorMsg(null);
         }
 
-        PagedGridResult grid = itemService.searchItems(keywords, sort, page, pageSize);
+        PageResult grid = itemService.searchItems(keywords, sort, page, pageSize);
 
         return JSONResult.ok(grid);
     }
@@ -124,7 +124,7 @@ public class ItemsController {
             return JSONResult.errorMsg(null);
         }
 
-        PagedGridResult grid = itemService.searchItems(catId, sort, page, pageSize);
+        PageResult grid = itemService.searchItems(catId, sort, page, pageSize);
 
         return JSONResult.ok(grid);
     }

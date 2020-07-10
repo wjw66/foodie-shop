@@ -11,7 +11,7 @@ import com.wjw.pojo.OrderStatus;
 import com.wjw.pojo.Orders;
 import com.wjw.pojo.vo.MyOrdersVO;
 import com.wjw.pojo.vo.OrderStatusCountsVO;
-import com.wjw.utils.PagedGridResult;
+import com.wjw.utils.PageResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +44,7 @@ public class MyOrdersServiceImpl implements MyOrdersService {
      * @return
      */
     @Override
-    public PagedGridResult queryMyOrders(String userId, Integer orderStatus, Integer page, Integer pageSize) {
+    public PageResult queryMyOrders(String userId, Integer orderStatus, Integer page, Integer pageSize) {
         Map<String, Object> map = new HashMap<>(16);
         map.put("userId", userId);
         if (Objects.nonNull(orderStatus)) {
@@ -53,7 +53,7 @@ public class MyOrdersServiceImpl implements MyOrdersService {
         PageHelper.startPage(page, pageSize);
         List<MyOrdersVO> myOrdersVOS = ordersMapperCustom.queryMyOrders(map);
 
-        return PagedGridResult.pageUtils(myOrdersVOS, page);
+        return PageResult.pageUtils(myOrdersVOS, page);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RuntimeException.class)
@@ -169,13 +169,13 @@ public class MyOrdersServiceImpl implements MyOrdersService {
      * @return
      */
     @Override
-    public PagedGridResult getOrdersTrend(String userId, Integer page, Integer pageSize) {
+    public PageResult getOrdersTrend(String userId, Integer page, Integer pageSize) {
         Map<String,Object> map = new HashMap<>(16);
         map.put("userId",userId);
 
         PageHelper.startPage(page,pageSize);
         List<OrderStatus> myOrderTrend = ordersMapperCustom.getMyOrderTrend(map);
 
-        return PagedGridResult.pageUtils(myOrderTrend,page);
+        return PageResult.pageUtils(myOrderTrend,page);
     }
 }

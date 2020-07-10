@@ -12,7 +12,7 @@ import com.wjw.pojo.OrderStatus;
 import com.wjw.pojo.Orders;
 import com.wjw.pojo.bo.center.OrderItemsCommentBO;
 import com.wjw.pojo.vo.MyCommentVO;
-import com.wjw.utils.PagedGridResult;
+import com.wjw.utils.PageResult;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,19 +91,22 @@ public class MyCommentsServiceImpl implements MyCommentsService {
     /**
      * 查询历史评论内容
      *
-     * @param userId
-     * @param page
-     * @param pageSize
+     * @param userId 查询条件
+     * @param pageNum 当前页
+     * @param pageSize 每页条数
      * @return
      */
     @Override
-    public PagedGridResult queryMyComments(String userId, Integer page, Integer pageSize) {
+    public List<MyCommentVO> queryMyComments(String userId, Integer pageNum, Integer pageSize) {
+        //查询参数
         Map<String,Object> map = new HashMap<>(16);
         map.put("userId",userId);
 
-        PageHelper.startPage(page,pageSize);
-        List<MyCommentVO> myCommentVOS = itemsCommentsMapperCustom.queryMyComments(map);
+        //分页
+        PageHelper.startPage(pageNum,pageSize);
+        List<MyCommentVO> list = itemsCommentsMapperCustom.queryMyComments(map);
 
-        return PagedGridResult.pageUtils(myCommentVOS,page);
+        //返回list
+        return list;
     }
 }

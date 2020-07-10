@@ -2,7 +2,7 @@ package com.wjw.center;
 
 import com.wjw.pojo.Orders;
 import com.wjw.pojo.vo.OrderStatusCountsVO;
-import com.wjw.utils.PagedGridResult;
+import com.wjw.utils.PageResult;
 
 /**
  * @author : wjwjava01@163.com
@@ -18,7 +18,7 @@ public interface MyOrdersService {
      * @param pageSize 每页条数
      * @return
      */
-    PagedGridResult queryMyOrders(String userId,Integer orderStatus,Integer page,Integer pageSize);
+    PageResult queryMyOrders(String userId, Integer orderStatus, Integer page, Integer pageSize);
     /**
      * 摸拟商家发货
      * @param orderId
@@ -64,5 +64,5 @@ public interface MyOrdersService {
      * @param pageSize
      * @return
      */
-    PagedGridResult getOrdersTrend(String userId,Integer page,Integer pageSize);
+    PageResult getOrdersTrend(String userId, Integer page, Integer pageSize);
 }

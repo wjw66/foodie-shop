@@ -6,7 +6,7 @@ import com.wjw.pojo.ItemsParam;
 import com.wjw.pojo.ItemsSpec;
 import com.wjw.pojo.vo.CommentLevelCountsVO;
 import com.wjw.pojo.vo.ShopCartVO;
-import com.wjw.utils.PagedGridResult;
+import com.wjw.utils.PageResult;
 
 import java.util.List;
 
@@ -65,8 +65,8 @@ public interface ItemService {
      * @param pageSize 每页显示数量
      * @return
      */
-    PagedGridResult queryPagedComments(String itemId, Integer level,
-                                       Integer page, Integer pageSize);
+    PageResult queryPagedComments(String itemId, Integer level,
+                                  Integer page, Integer pageSize);
 
     /**
      * 搜索商品列表
@@ -77,7 +77,7 @@ public interface ItemService {
      * @param pageSize
      * @return
      */
-    PagedGridResult searchItems(String keywords, String sort, Integer page, Integer pageSize);
+    PageResult searchItems(String keywords, String sort, Integer page, Integer pageSize);
 
     /**
      * 根据分类id搜索商品列表
@@ -88,7 +88,7 @@ public interface ItemService {
      * @param pageSize
      * @return
      */
-    PagedGridResult searchItems(Integer catId, String sort, Integer page, Integer pageSize);
+    PageResult searchItems(Integer catId, String sort, Integer page, Integer pageSize);
 
     /**
      * 根据规格ids查询最新的购物车中商品数据(用于刷新渲染购物车中的商品数据)

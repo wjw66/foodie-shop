@@ -10,7 +10,7 @@ import com.wjw.pojo.vo.ItemCommentVO;
 import com.wjw.pojo.vo.SearchItemsVO;
 import com.wjw.pojo.vo.ShopCartVO;
 import com.wjw.utils.DesensitizationUtil;
-import com.wjw.utils.PagedGridResult;
+import com.wjw.utils.PageResult;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -125,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
      * @return
      */
     @Override
-    public PagedGridResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize) {
+    public PageResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize) {
 
         Map<String, Object> map = new HashMap<>(16);
         map.put("itemId", itemId);
@@ -142,7 +142,7 @@ public class ItemServiceImpl implements ItemService {
                 (DesensitizationUtil.commonDisplay(itemCommentVO.getNickname()))
         );
 
-        return PagedGridResult.pageUtils(list,page);
+        return PageResult.pageUtils(list,page);
     }
 
     /**
@@ -155,14 +155,14 @@ public class ItemServiceImpl implements ItemService {
      * @return
      */
     @Override
-    public PagedGridResult searchItems(String keywords, String sort, Integer page, Integer pageSize) {
+    public PageResult searchItems(String keywords, String sort, Integer page, Integer pageSize) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("keywords",keywords);
         map.put("sort",sort);
         PageHelper.startPage(page,pageSize);
         List<SearchItemsVO> list = itemsMapperCustom.searchItems(map);
 
-        return PagedGridResult.pageUtils(list,page);
+        return PageResult.pageUtils(list,page);
     }
 
     /**
@@ -175,7 +175,7 @@ public class ItemServiceImpl implements ItemService {
      * @return
      */
     @Override
-    public PagedGridResult searchItems(Integer catId, String sort, Integer page, Integer pageSize) {
+    public PageResult searchItems(Integer catId, String sort, Integer page, Integer pageSize) {
         Map<String, Object> map = new HashMap<>();
         map.put("catId", catId);
         map.put("sort", sort);
@@ -183,7 +183,7 @@ public class ItemServiceImpl implements ItemService {
         PageHelper.startPage(page, pageSize);
         List<SearchItemsVO> list = itemsMapperCustom.searchItemsByThirdCat(map);
 
-        return PagedGridResult.pageUtils(list,page);
+        return PageResult.pageUtils(list,page);
     }
 
     /**

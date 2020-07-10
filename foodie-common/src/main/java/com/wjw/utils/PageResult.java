@@ -13,7 +13,7 @@ import java.util.List;
  * @Description: 用来返回分页Grid的数据格式
  */
 @Data
-public class PagedGridResult {
+public class PageResult {
 	/**
 	 * 当前页数
 	 */
@@ -31,12 +31,22 @@ public class PagedGridResult {
 	 */
 	private List<?> rows;
 
-	private PagedGridResult(){};
+	private PageResult(){};
 
-	public static PagedGridResult pageUtils(List<?> list,Integer page){
+	public static PageResult pageUtils(List<?> list, Integer page){
 		PageInfo<?> pageInfo = new PageInfo<>(list);
-		PagedGridResult gridResult = new PagedGridResult();
+		PageResult gridResult = new PageResult();
 		gridResult.setPage(page);
+		gridResult.setRecords(pageInfo.getTotal());
+		gridResult.setTotal(pageInfo.getPages());
+		gridResult.setRows(list);
+		return gridResult;
+	}
+
+	public static PageResult pageUtils(List<?> list){
+		PageInfo<?> pageInfo = new PageInfo<>(list);
+		PageResult gridResult = new PageResult();
+		gridResult.setPage(pageInfo.getPageNum());
 		gridResult.setRecords(pageInfo.getTotal());
 		gridResult.setTotal(pageInfo.getPages());
 		gridResult.setRows(list);

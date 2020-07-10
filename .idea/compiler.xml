@@ -9,9 +9,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="demo" />
         <module name="foodie-demo" />
-        <module name="foodie-service" />
         <module name="foodie-pojo" />
         <module name="foodie-mapper" />
+        <module name="foodie-service" />
         <module name="foodie-common" />
         <module name="foodie-api" />
       </profile>

@@ -4,7 +4,7 @@ import com.wjw.center.MyOrdersService;
 import com.wjw.controller.BaseController;
 import com.wjw.pojo.vo.OrderStatusCountsVO;
 import com.wjw.utils.JSONResult;
-import com.wjw.utils.PagedGridResult;
+import com.wjw.utils.PageResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -58,7 +58,7 @@ public class MyOrdersController extends BaseController {
             return JSONResult.errorMsg(null);
         }
 
-        PagedGridResult grid = myOrdersService.queryMyOrders(userId, orderStatus, page, pageSize);
+        PageResult grid = myOrdersService.queryMyOrders(userId, orderStatus, page, pageSize);
 
         return JSONResult.ok(grid);
     }
@@ -138,7 +138,7 @@ public class MyOrdersController extends BaseController {
             return JSONResult.errorMsg(null);
         }
 
-        PagedGridResult grid = myOrdersService.getOrdersTrend(userId, page, pageSize);
+        PageResult grid = myOrdersService.getOrdersTrend(userId, page, pageSize);
 
         return JSONResult.ok(grid);
     }

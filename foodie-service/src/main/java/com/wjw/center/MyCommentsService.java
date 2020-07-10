@@ -2,7 +2,8 @@ package com.wjw.center;
 
 import com.wjw.pojo.OrderItems;
 import com.wjw.pojo.bo.center.OrderItemsCommentBO;
-import com.wjw.utils.PagedGridResult;
+import com.wjw.pojo.vo.MyCommentVO;
+import com.wjw.utils.PageResult;
 
 import java.util.List;
 
@@ -35,5 +36,5 @@ public interface MyCommentsService {
      * @param pageSize
      * @return
      */
-    PagedGridResult queryMyComments(String userId, Integer page, Integer pageSize);
+    List<MyCommentVO> queryMyComments(String userId, Integer page, Integer pageSize);
 }

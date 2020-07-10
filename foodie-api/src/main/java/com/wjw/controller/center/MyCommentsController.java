@@ -7,8 +7,9 @@ import com.wjw.enums.YesOrNo;
 import com.wjw.pojo.OrderItems;
 import com.wjw.pojo.Orders;
 import com.wjw.pojo.bo.center.OrderItemsCommentBO;
+import com.wjw.pojo.vo.MyCommentVO;
 import com.wjw.utils.JSONResult;
-import com.wjw.utils.PagedGridResult;
+import com.wjw.utils.PageResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -94,9 +95,8 @@ public class MyCommentsController extends BaseController {
             return JSONResult.errorMsg(null);
         }
 
-        PagedGridResult grid = myCommentsService.queryMyComments(userId, page, pageSize);
-
-        return JSONResult.ok(grid);
+        List<MyCommentVO> list = myCommentsService.queryMyComments(userId, page, pageSize);
+        return JSONResult.ok(PageResult.pageUtils(list));
     }
 
 }
