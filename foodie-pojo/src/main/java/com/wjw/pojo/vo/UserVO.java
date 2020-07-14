@@ -48,4 +48,8 @@ public class UserVO {
      */
     private Date birthday;
 
+    /**
+     * 用户会话token
+     */
+    private String userUniqueToken;
 }

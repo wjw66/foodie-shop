@@ -11,7 +11,7 @@
 /foodie-api/target
 # Maven #
 target/
-
+/target/
 # IDEA #
 .idea/
 *.iml

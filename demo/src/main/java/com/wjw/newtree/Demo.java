@@ -16,7 +16,6 @@ public class Demo {
         Set<String> child = getChild("交付", 1);
         System.out.println(child);
     }
-
     /**
      * 获取当前节点的子节点set集合
      * @param key 所有父节点和当前节点拼接成的字符串
@@ -44,7 +43,6 @@ public class Demo {
             //返回子节点的所有元素
             return map.get(key);
     }
-
     public static List<List<String>> data() {
         List<String> data = new ArrayList<>();
         data.add("交付>会议产品>分摊费用");

@@ -10,6 +10,7 @@
         <module name="demo" />
         <module name="foodie-search" />
         <module name="foodie-demo" />
+        <module name="foodie-sso" />
         <module name="foodie-pojo" />
         <module name="foodie-mapper" />
         <module name="foodie-service" />
@@ -31,6 +32,7 @@
       <module name="foodie-pojo" options="-parameters" />
       <module name="foodie-search" options="-parameters" />
       <module name="foodie-service" options="-parameters" />
+      <module name="foodie-sso" options="-parameters" />
     </option>
   </component>
 </project>
