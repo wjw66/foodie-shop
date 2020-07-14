@@ -1,5 +1,7 @@
 package com.wjw.newtree;
 
+import cn.hutool.core.convert.Convert;
+
 import java.util.*;
 
 /**
@@ -9,7 +11,14 @@ import java.util.*;
  **/
 public class TreeDemo {
     public static void main(String[] args) {
-
+        String[] c = {"1","2","3","4"};
+        //结果为Integer数组
+        int[] array = Arrays.stream(c).mapToInt(Integer::parseInt).toArray();
+        Integer[] intArray = Convert.toIntArray(c);
+        //System.out.println(c);
+        long[] d = {1,2,3,4,5};
+        //结果为Integer数组
+        Integer[] intArray2 = Convert.toIntArray(c);
     }
     /**
      * 获取当前节点的子节点set集合

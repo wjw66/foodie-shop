@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:shiro="http://www.w3.org/1999/xhtml">
+<meta charset="utf-8">
+<div th:include="include::vue"></div>
+
+<body>
+<div id="app">
+    <i-button @click="show">Click me!</i-button>
+    <Modal v-model="visible" title="Welcome">Welcome to ViewUI</Modal>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            visible: false
+        },
+        methods: {
+            show: function () {
+                this.visible = true;
+            }
+        }
+    })
+</script>
+</body>
+
+</html>

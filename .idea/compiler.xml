@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="demo" />
+        <module name="foodie-search" />
         <module name="foodie-demo" />
         <module name="foodie-pojo" />
         <module name="foodie-mapper" />
@@ -28,6 +29,7 @@
       <module name="foodie-demo" options="-parameters" />
       <module name="foodie-mapper" options="-parameters" />
       <module name="foodie-pojo" options="-parameters" />
+      <module name="foodie-search" options="-parameters" />
       <module name="foodie-service" options="-parameters" />
     </option>
   </component>
