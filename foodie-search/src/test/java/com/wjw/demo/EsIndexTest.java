@@ -14,9 +14,14 @@ import javax.annotation.Resource;
  * @author : wangjianwei
  * @version : 1.0
  * @date : 2020/7/14 13:58
+ * @Description: 不建议使用ElasticsearchTemplate对索引进行管理（创建索引，更新映射，删除索引）索引即数据库表
+ *
+ * 1.属性（FieldType）类型不灵活
+ * 2.主分片与副本分片数无法设置
+ * 3.通过es创建索引（数据库表）不合理
  **/
 @Slf4j
-public class EsTest extends EsApplicationTest {
+public class EsIndexTest extends EsApplicationTest {
     @Resource
     private ElasticsearchTemplate elasticsearchTemplate;
 
