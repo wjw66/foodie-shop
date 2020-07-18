@@ -24,8 +24,8 @@ public class Stu implements Serializable {
     private String name;
     @Field(store = true,type = FieldType.Integer)
     private Integer age;
-//    @Field(store = true,type = FieldType.Text)
-//    private String tags;
-//    @Field(store = true,type = FieldType.Text)
-//    private String desc;
+    @Field(store = true,type = FieldType.Integer)
+    private String desc;
+    @Field(store = true,type = FieldType.Text)
+    private String tags;
 }

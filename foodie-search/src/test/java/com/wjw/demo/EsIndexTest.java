@@ -26,19 +26,24 @@ public class EsIndexTest extends EsApplicationTest {
     private ElasticsearchTemplate elasticsearchTemplate;
 
     /**
-     * 创建索引Stu
+     * 创建或更新索引Stu（有就更新）
      */
     @Test
     public void createIndexStu(){
-        Stu stu = new Stu();
-        stu.setStuId(1000L);
-        stu.setName("mybatis");
-        stu.setAge(12);
+        for (int i = 0; i < 30; i++) {
+            Stu stu = new Stu();
+            stu.setStuId(1000L + i);
+            stu.setName(i + "王建伟" + i);
+            stu.setAge(12 + i);
+            stu.setDesc(i + "天没睡，打了" + i * 3 + "个蚊子" + i);
+            stu.setTags(i + "空手能抓" + i * 2 + "个苍蝇");
 
-        //构建创建索引对象
-        IndexQuery indexQuery = new IndexQueryBuilder().withObject(stu).build();
-        //创建索引,如果索引已存在，更新数据（不重新创建索引）
-        elasticsearchTemplate.index(indexQuery);
+            //构建创建索引对象
+            IndexQuery indexQuery = new IndexQueryBuilder().withObject(stu).build();
+            //创建索引,如果索引已存在，更新数据（不重新创建索引）
+            elasticsearchTemplate.index(indexQuery);
+        }
+
     }
     @Test
     public void delIndexStu(){

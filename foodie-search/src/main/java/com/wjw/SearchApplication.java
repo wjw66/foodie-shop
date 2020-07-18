@@ -10,7 +10,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication//排除springSecurity的自动装配
 public class SearchApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(SearchApplication.class,args);
     }
+
 }
