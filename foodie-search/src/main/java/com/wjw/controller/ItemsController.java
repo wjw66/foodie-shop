@@ -39,6 +39,7 @@ public class ItemsController {
         //es分页从零开始，但前端默认传1
         page--;
 
+        //TODO 分页时过虑 的和语气词等
         EsPageResult pageResult = itemsEsService.searchItems(keywords, sort, page, pageSize);
 
         return JSONResult.ok(pageResult);
