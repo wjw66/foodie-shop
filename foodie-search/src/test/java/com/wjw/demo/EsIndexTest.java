@@ -47,6 +47,7 @@ public class EsIndexTest extends EsApplicationTest {
     }
     @Test
     public void delIndexStu(){
-        elasticsearchTemplate.deleteIndex(Stu.class);
+        elasticsearchTemplate.deleteIndex("foodie-items");
+
     }
 }
