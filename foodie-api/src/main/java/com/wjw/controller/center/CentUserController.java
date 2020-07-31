@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StopWatch;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -133,7 +134,10 @@ public class CentUserController extends BaseController {
             return JSONResult.errorMap(errorMap);
         }
 
-
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        stopWatch.stop();
+        stopWatch.getTotalTimeSeconds();
         Users userResult = centerUserService.updateUserInfo(userId, centUserBO);
         //增加token令牌，会整合进redis，使用分布式会话
         UsersVO usersVO = getUsersVO(userResult);

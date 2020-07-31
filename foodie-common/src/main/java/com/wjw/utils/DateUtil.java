@@ -23,32 +23,30 @@ public class DateUtil {
     /**
      * yyyy-MM-dd hh:mm:ss
      */
-    public static String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    public static String DATE_PATTERN = "yyyyMMddHHmmss";
+    public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_PATTERN = "yyyyMMddHHmmss";
    
     /**
      * 则个
      */
-    private static boolean LENIENT_DATE = false;
+    private static final boolean LENIENT_DATE = false;
 
 
-    private static Random random = new Random();
+    private static final Random RANDOM = new Random();
     private static final int ID_BYTES = 10;
 
     public synchronized static String generateId() {
-        StringBuffer result = new StringBuffer();
-        result = result.append(System.currentTimeMillis());
+        StringBuilder result = new StringBuilder();
+        result.append(System.currentTimeMillis());
         for (int i = 0; i < ID_BYTES; i++) {
-            result = result.append(random.nextInt(10));
+            result.append(RANDOM.nextInt(10));
         }
         return result.toString();
     }
 
-    protected static final float normalizedJulian(float JD) {
+    protected static float normalizedJulian(float JD) {
 
-        float f = Math.round(JD + 0.5f) - 0.5f;
-
-        return f;
+        return Math.round(JD + 0.5f) - 0.5f;
     }
 
     /**
@@ -59,7 +57,7 @@ public class DateUtil {
      * @param JD the Julian date
      * @return the Gregorian date
      */
-    public static final Date toDate(float JD) {
+    public static Date toDate(float JD) {
 
         /* To convert a Julian Day Number to a Gregorian date, assume that it is for 0 hours, Greenwich time (so
          * that it ends in 0.5). Do the following calculations, again dropping the fractional part of all
@@ -106,7 +104,7 @@ public class DateUtil {
      * @param late the "second date"
      * @return the days between the two dates
      */
-    public static final int daysBetween(Date early, Date late) {
+    public static int daysBetween(Date early, Date late) {
 
         Calendar c1 = Calendar.getInstance();
         Calendar c2 = Calendar.getInstance();
@@ -125,7 +123,7 @@ public class DateUtil {
      * @param late
      * @return the days between two dates.
      */
-    public static final int daysBetween(Calendar early, Calendar late) {
+    public static int daysBetween(Calendar early, Calendar late) {
 
         return (int) (toJulian(late) - toJulian(early));
     }
@@ -138,7 +136,7 @@ public class DateUtil {
      * @param c a calendar instance
      * @return the julian day number
      */
-    public static final float toJulian(Calendar c) {
+    public static float toJulian(Calendar c) {
 
         int Y = c.get(Calendar.YEAR);
         int M = c.get(Calendar.MONTH);
@@ -148,9 +146,8 @@ public class DateUtil {
         int C = 2 - A + B;
         float E = (int) (365.25f * (Y + 4716));
         float F = (int) (30.6001f * (M + 1));
-        float JD = C + D + E + F - 1524.5f;
 
-        return JD;
+        return C + D + E + F - 1524.5f;
     }
 
     /**
@@ -161,7 +158,7 @@ public class DateUtil {
      * @param date
      * @return the julian day number
      */
-    public static final float toJulian(Date date) {
+    public static float toJulian(Date date) {
 
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -177,8 +174,8 @@ public class DateUtil {
      * @return
      * @throws ParseException
      */
-    public static final String dateIncrease(String isoString, String fmt,
-                                            int field, int amount) {
+    public static String dateIncrease(String isoString, String fmt,
+                                      int field, int amount) {
 
         try {
             Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone(
@@ -203,8 +200,8 @@ public class DateUtil {
      * @param
      * @exception ParseException if an unknown field value is given.
      */
-    public static final String roll(String isoString, String fmt, int field,
-                                    boolean up) throws ParseException {
+    public static String roll(String isoString, String fmt, int field,
+                              boolean up) throws ParseException {
 
         Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone(
                 "GMT"));
@@ -223,7 +220,7 @@ public class DateUtil {
      * @param up Indicates if rolling up or rolling down the field value.
      * @exception ParseException if an unknown field value is given.
      */
-    public static final String roll(String isoString, int field, boolean up) throws
+    public static String roll(String isoString, int field, boolean up) throws
             ParseException {
 
         return roll(isoString, DATETIME_PATTERN, field, up);
@@ -327,9 +324,8 @@ public class DateUtil {
      */
     public static Date getCurrentDateTime() {
         Calendar calNow = Calendar.getInstance();
-        Date dtNow = calNow.getTime();
 
-        return dtNow;
+        return calNow.getTime();
     }
 
     /**
@@ -457,8 +453,7 @@ public class DateUtil {
     public static String getYear(Date date) {
         SimpleDateFormat formater = new SimpleDateFormat(
                 "yyyy");
-        String cur_year = formater.format(date);
-        return cur_year;
+        return formater.format(date);
     }
 
     /**
@@ -469,8 +464,7 @@ public class DateUtil {
     public static String getMonth(Date date) {
         SimpleDateFormat formater = new SimpleDateFormat(
                 "MM");
-        String cur_month = formater.format(date);
-        return cur_month;
+        return formater.format(date);
     }
 
     /**
@@ -480,15 +474,14 @@ public class DateUtil {
     public static String getDay(Date date) {
         SimpleDateFormat formater = new SimpleDateFormat(
                 "dd");
-        String cur_day = formater.format(date);
-        return cur_day;
+        return formater.format(date);
     }
     
     public static int getDayInt(Date date) {
         SimpleDateFormat formater = new SimpleDateFormat(
                 "dd");
         String cur_day = formater.format(date);
-        return Integer.valueOf(cur_day);
+        return Integer.parseInt(cur_day);
     }
     
     /**
@@ -498,8 +491,7 @@ public class DateUtil {
     public static String getHour(Date date) {
         SimpleDateFormat formater = new SimpleDateFormat(
                 "HH");
-        String cur_day = formater.format(date);
-        return cur_day;
+        return formater.format(date);
     }    
 
     public static int getMinsFromDate(Date dt) {
@@ -589,10 +581,9 @@ public class DateUtil {
 		Calendar calendarFirst = Calendar.getInstance();
 		calendarFirst = Calendar.getInstance();  
         calendarFirst.add(Calendar.MONTH, 0);  
-        calendarFirst.set(Calendar.DAY_OF_MONTH, 1);  
-        String firstDate = format.format(calendarFirst.getTime()); 
-        
-        return firstDate;
+        calendarFirst.set(Calendar.DAY_OF_MONTH, 1);
+
+        return format.format(calendarFirst.getTime());
     }
     
     /**
@@ -609,9 +600,8 @@ public class DateUtil {
 		Calendar calendarLast = Calendar.getInstance();
 		calendarLast.setTime(new Date());
 		calendarLast.getActualMaximum(Calendar.DAY_OF_MONTH);
-		
-		String lastDate = format.format(calendarLast.getTime());  
-		return lastDate;
+
+        return format.format(calendarLast.getTime());
     }
     
     /**
@@ -631,11 +621,8 @@ public class DateUtil {
 			if (date == null) {
 				return false;
 			} else {
-				if (pos.getIndex() > sdf.format(date).length()) {
-					return false;
-				}
-				return true;
-			}
+                return pos.getIndex() <= sdf.format(date).length();
+            }
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

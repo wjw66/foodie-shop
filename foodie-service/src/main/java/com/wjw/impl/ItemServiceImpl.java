@@ -11,11 +11,15 @@ import com.wjw.pojo.vo.SearchItemsVO;
 import com.wjw.pojo.vo.ShopCartVO;
 import com.wjw.utils.DesensitizationUtil;
 import com.wjw.utils.PageResult;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author : wjwjava01@163.com
@@ -36,6 +40,8 @@ public class ItemServiceImpl implements ItemService {
     private ItemsCommentsMapper itemsCommentsMapper;
     @Resource
     private ItemsMapperCustom itemsMapperCustom;
+    @Autowired
+    private RedissonClient redissonClient;
 
 
     /**
@@ -60,7 +66,6 @@ public class ItemServiceImpl implements ItemService {
         Example example = new Example(ItemsImg.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("itemId", itemId);
-
         return itemsImgMapper.selectByExample(example);
     }
 
@@ -142,7 +147,7 @@ public class ItemServiceImpl implements ItemService {
                 (DesensitizationUtil.commonDisplay(itemCommentVO.getNickname()))
         );
 
-        return PageResult.pageUtils(list,page);
+        return PageResult.pageUtils(list, page);
     }
 
     /**
@@ -157,12 +162,12 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public PageResult searchItems(String keywords, String sort, Integer page, Integer pageSize) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("keywords",keywords);
-        map.put("sort",sort);
-        PageHelper.startPage(page,pageSize);
+        map.put("keywords", keywords);
+        map.put("sort", sort);
+        PageHelper.startPage(page, pageSize);
         List<SearchItemsVO> list = itemsMapperCustom.searchItems(map);
 
-        return PageResult.pageUtils(list,page);
+        return PageResult.pageUtils(list, page);
     }
 
     /**
@@ -183,7 +188,7 @@ public class ItemServiceImpl implements ItemService {
         PageHelper.startPage(page, pageSize);
         List<SearchItemsVO> list = itemsMapperCustom.searchItemsByThirdCat(map);
 
-        return PageResult.pageUtils(list,page);
+        return PageResult.pageUtils(list, page);
     }
 
     /**
@@ -196,7 +201,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ShopCartVO> queryItemsBySpecIds(String specIds) {
         String[] spec = specIds.split(",");
         ArrayList<String> list = new ArrayList<>();
-        Collections.addAll(list,spec);
+        Collections.addAll(list, spec);
 
         return itemsMapperCustom.queryItemsBySpecIds(list);
     }
@@ -216,7 +221,7 @@ public class ItemServiceImpl implements ItemService {
     /**
      * 乐观锁扣库存
      *
-     * @param specId  商品规格id
+     * @param specId    商品规格id
      * @param buyCounts 购买件数
      * @return
      */

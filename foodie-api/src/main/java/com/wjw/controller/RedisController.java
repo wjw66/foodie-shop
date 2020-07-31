@@ -1,6 +1,8 @@
 package com.wjw.controller;
 
+import com.wjw.utils.RedisLock;
 import com.wjw.utils.RedisOperator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +13,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+@Slf4j
 @ApiIgnore
 @RestController
 @RequestMapping("redis")
@@ -77,6 +79,23 @@ public class RedisController {
     public Object batchGet(String... keys) {
         List<String> keysList = Arrays.asList(keys);
         return redisOperator.batchGet(keysList);
+    }
+
+    /**
+     * 批量查询 pipeline
+     * @param
+     * @return
+     */
+    @GetMapping("/lock")
+    public String lock() {
+        RedisLock redisLock = new RedisLock();
+        boolean lock = redisLock.rLock("order", 10L);
+        if (lock){
+            log.info("抢夺锁成功!");
+        }else {
+            log.info("抢夺锁失败!");
+        }
+        return "分布式锁";
     }
 
 }
