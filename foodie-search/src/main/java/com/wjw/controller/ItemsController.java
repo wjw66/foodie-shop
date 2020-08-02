@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("items")
 public class ItemsController {
-    private final Integer MAX_STR_LENGTH = 100;
     @Autowired
     private ItemsEsService itemsEsService;
 
@@ -33,7 +32,8 @@ public class ItemsController {
             return JSONResult.errorMsg(null);
         }
 
-        if (StringUtils.isNotBlank(keywords) && keywords.length() > MAX_STR_LENGTH) {
+        int maxlength = 100;
+        if (StringUtils.isNotBlank(keywords) && keywords.length() > maxlength) {
             return JSONResult.errorMsg("输入的内容超过限制，请减少字数再试！");
         }
         //es分页从零开始，但前端默认传1

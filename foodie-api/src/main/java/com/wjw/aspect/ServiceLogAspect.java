@@ -1,8 +1,6 @@
 package com.wjw.aspect;
 
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
@@ -39,28 +37,28 @@ public class ServiceLogAspect {
      * @return
      * @throws Throwable
      */
-    @Around("execution(* com.wjw.impl..*.*(..))")
-    public Object recordTimeLog(ProceedingJoinPoint joinPoint) throws Throwable {
-        log.info("======== 开始执行 {}.{} ========",
-                //获取类名和方法名
-                joinPoint.getTarget().getClass(), joinPoint.getSignature().getName());
-
-        Long begin = System.currentTimeMillis();
-        //执行目标service
-        Object result = joinPoint.proceed();
-        Long end = System.currentTimeMillis();
-
-        Long takeTime = end - begin;
-
-        String str = "====== 执行结束，耗时：{} 毫秒 ======";
-
-        if (takeTime > ERROR_TIME) {
-            log.error(str, takeTime);
-        } else if (takeTime > WARN_TIME) {
-            log.warn(str, takeTime);
-        } else {
-            log.info(str, takeTime);
-        }
-        return result;
-    }
+//    @Around("execution(* com.wjw.impl..*.*(..))")
+//    public Object recordTimeLog(ProceedingJoinPoint joinPoint) throws Throwable {
+//        log.info("======== 开始执行 {}.{} ========",
+//                //获取类名和方法名
+//                joinPoint.getTarget().getClass(), joinPoint.getSignature().getName());
+//
+//        Long begin = System.currentTimeMillis();
+//        //执行目标service
+//        Object result = joinPoint.proceed();
+//        Long end = System.currentTimeMillis();
+//
+//        Long takeTime = end - begin;
+//
+//        String str = "====== 执行结束，耗时：{} 毫秒 ======";
+//
+//        if (takeTime > ERROR_TIME) {
+//            log.error(str, takeTime);
+//        } else if (takeTime > WARN_TIME) {
+//            log.warn(str, takeTime);
+//        } else {
+//            log.info(str, takeTime);
+//        }
+//        return result;
+//    }
 }

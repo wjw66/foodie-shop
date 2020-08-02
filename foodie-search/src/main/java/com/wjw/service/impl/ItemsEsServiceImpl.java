@@ -104,4 +104,5 @@ public class ItemsEsServiceImpl implements ItemsEsService {
         items.setSellCounts(sellCounts);
         return items;
     }
+
 }

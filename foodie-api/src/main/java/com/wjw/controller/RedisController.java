@@ -21,6 +21,8 @@ public class RedisController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private RedisLock redisLock;
 
     @Autowired
     private RedisOperator redisOperator;
@@ -87,15 +89,19 @@ public class RedisController {
      * @return
      */
     @GetMapping("/lock")
-    public String lock() {
-        RedisLock redisLock = new RedisLock();
-        boolean lock = redisLock.rLock("order", 10L);
+    public String lock() throws InterruptedException {
+        boolean lock = redisLock.rLock("order-xxx", 10L);
         if (lock){
-            log.info("抢夺锁成功!");
+            log.info("抢夺锁成功!执行任务！");
+            Thread.sleep(5000L);
+            boolean unLock = redisLock.unLock("order-xxx");
+            if (unLock){
+                log.info("释放锁成功！");
+            }
         }else {
             log.info("抢夺锁失败!");
         }
-        return "分布式锁";
+        return "分布式锁执行！";
     }
 
 }
