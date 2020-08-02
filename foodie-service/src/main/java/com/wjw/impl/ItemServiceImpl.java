@@ -11,6 +11,7 @@ import com.wjw.pojo.vo.SearchItemsVO;
 import com.wjw.pojo.vo.ShopCartVO;
 import com.wjw.utils.DesensitizationUtil;
 import com.wjw.utils.PageResult;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeUnit;
  * @date : 20:43 2020/5/7
  * @description :
  */
+@Slf4j
 @Service
 public class ItemServiceImpl implements ItemService {
     @Resource
@@ -227,9 +229,19 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public int decreaseItemSpecStock(String specId, int buyCounts) {
-        int result = itemsMapperCustom.decreaseItemSpecStock(specId, buyCounts);
-        if (result != 1) {
-            throw new RuntimeException("订单创建失败，原因：库存不足!");
+        //多人抢购同一件商品会产生锁的竞争
+        RLock lock = redissonClient.getLock("item_lock" + specId);
+        lock.lock(3000, TimeUnit.MILLISECONDS);
+        int result = 0;
+        try {
+            result = itemsMapperCustom.decreaseItemSpecStock(specId, buyCounts);
+            if (result != 1) {
+                throw new RuntimeException("订单创建失败，原因：库存不足!");
+            }
+        } catch (RuntimeException e) {
+            log.error("【扣减库存失败】",e);
+        }finally {
+            lock.unlock();
         }
         return result;
     }
