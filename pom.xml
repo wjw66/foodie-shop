@@ -16,6 +16,7 @@
         <module>foodie-api</module>
         <module>foodie-search</module>
         <module>foodie-sso</module>
+        <module>foodie-rabbitmq</module>
         <!--        <module>foodie-demo</module>-->
     </modules>
 
