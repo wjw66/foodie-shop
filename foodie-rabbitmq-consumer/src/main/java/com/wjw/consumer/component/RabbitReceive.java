@@ -1,16 +1,14 @@
 package com.wjw.consumer.component;
 
+import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.connection.CorrelationData;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.amqp.rabbit.annotation.*;
+import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author : wjwjava01@163.com
@@ -20,41 +18,27 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class RabbitReceive {
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
 
     /**
-     * correlationData 唯一标识
-     * b （ack）是否发送成功
-     * s 发送失败的异常信息
+     * 建立mq的绑定关系,写死在注解里了,后续建议写在配置文件中
+     * @param message
+     * @param channel
      */
-    final RabbitTemplate.ConfirmCallback confirmCallback = (correlationData, b, s) -> {
-    };
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(value = "queue-1", durable = "true"),
+            exchange = @Exchange(name = "exchange-1", durable = "true", type = "topic", ignoreDeclarationExceptions = "true"),
+            key = "springboot.*"))
+    @RabbitHandler
+    public <T> void onMessage(Message<T> message, Channel channel) throws IOException {
+        //1.消费消息,message.getPayload()获取消息体
+        log.info("消费消息:{}",message.getPayload());
 
-    /**
-     * 对外发送消息的方法
-     *
-     * @param msg        具体消息内容
-     * @param properties 对消息的额外附加属性：如过期事件等
-     * @throws Exception
-     */
-    public <T> void send(T msg, Map<String, Object> properties) throws Exception {
-        MessageHeaders mhs = new MessageHeaders(properties);
-        Message<T> message = MessageBuilder.createMessage(msg, mhs);
-
-        rabbitTemplate.setConfirmCallback(confirmCallback);
-        //指定业务唯一ID
-        CorrelationData data = new CorrelationData(UUID.randomUUID().toString());
-        /**
-         * 1指定的 exchange
-         * 2指定的routingKey
-         * 3传入队列的msg
-         * 4确认传入后执行的操作
-         * 5指定业务的唯一ID
-         */
-        rabbitTemplate.convertAndSend("exchange-1",
-                "springboot-rabbit", message,
-                p -> {log.info("to do something{}", message);return null;},
-                data);
+        //2.处理成功后获取deliveryTag 并进行手工的ACK操作
+        Long deliveryTag = (Long)message.getHeaders().get(AmqpHeaders.DELIVERY_TAG);
+        if (Objects.isNull(deliveryTag)) {
+            return;
+        }
+        //delivery_tag是消息投递序号，每个channel对应一个(long类型),true批量,false不批量
+        channel.basicAck(deliveryTag,false);
     }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 @RequestMapping("address")
 @RestController
 public class AddressController {
+
     /**
      * 用户在确认订单页面，可以针对收货地址做如下操作：
      * 1. 查询用户的所有收货地址列表
@@ -31,7 +32,6 @@ public class AddressController {
      * 4. 修改收货地址
      * 5. 设置默认地址
      */
-
     @Autowired
     private AddressService addressService;
 
@@ -60,6 +60,7 @@ public class AddressController {
         }
         return JSONResult.ok();
     }
+
     @ApiOperation(value = "用户修改地址", notes = "用户修改地址", httpMethod = "POST")
     @PostMapping("/update")
     public JSONResult update(@RequestBody AddressBO addressBO) {
@@ -74,7 +75,7 @@ public class AddressController {
         }
 
         int i = addressService.updateUserAddress(addressBO);
-        if (i == 0){
+        if (i == 0) {
             return JSONResult.errorMsg("");
         }
 
@@ -95,7 +96,7 @@ public class AddressController {
 
     @ApiOperation(value = "用户设置默认地址", notes = "用户设置默认地址", httpMethod = "POST")
     @PostMapping("/setDefalut")
-    public JSONResult setDefalut(
+    public JSONResult setDefault(
             @RequestParam String userId,
             @RequestParam String addressId) {
 
@@ -106,6 +107,7 @@ public class AddressController {
         addressService.updateUserAddressToBeDefault(userId, addressId);
         return JSONResult.ok();
     }
+
     /**
      * 地址参数校验
      *

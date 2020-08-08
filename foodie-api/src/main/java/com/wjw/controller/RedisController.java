@@ -13,6 +13,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 @Slf4j
 @ApiIgnore
 @RestController
@@ -49,13 +50,14 @@ public class RedisController {
 
     /**
      * 大量key查询
+     *
      * @param keys
      * @return
      */
     @GetMapping("/getALot")
     public Object getALot(String... keys) {
         List<String> resutl = new ArrayList<>();
-        for (String k:keys) {
+        for (String k : keys) {
             resutl.add(redisOperator.get(k));
         }
         return resutl;
@@ -63,6 +65,7 @@ public class RedisController {
 
     /**
      * 批量查询 mget
+     *
      * @param keys
      * @return
      */
@@ -74,6 +77,7 @@ public class RedisController {
 
     /**
      * 批量查询 pipeline
+     *
      * @param keys
      * @return
      */
@@ -85,25 +89,23 @@ public class RedisController {
 
     /**
      * 批量查询 pipeline
+     *
      * @param
      * @return
      */
     @GetMapping("/lock")
     public String lock() throws InterruptedException {
         boolean lock = redisLock.rLock("order-xxx", 10L);
-        if (lock){
+        if (lock) {
             log.info("抢夺锁成功!执行任务！");
             Thread.sleep(5000L);
             boolean unLock = redisLock.unLock("order-xxx");
-            if (unLock){
+            if (unLock) {
                 log.info("释放锁成功！");
             }
-        }else {
+        } else {
             log.info("抢夺锁失败!");
         }
         return "分布式锁执行！";
     }
-
-
-
 }

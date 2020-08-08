@@ -163,7 +163,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public PageResult searchItems(String keywords, String sort, Integer page, Integer pageSize) {
-        HashMap<String, Object> map = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>(16);
         map.put("keywords", keywords);
         map.put("sort", sort);
         PageHelper.startPage(page, pageSize);
@@ -183,7 +183,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public PageResult searchItems(Integer catId, String sort, Integer page, Integer pageSize) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("catId", catId);
         map.put("sort", sort);
 

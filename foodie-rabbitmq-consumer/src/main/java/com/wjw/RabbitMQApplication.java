@@ -14,3 +14,4 @@ public class RabbitMQApplication {
         SpringApplication.run(RabbitMQApplication.class,args);
     }
 }
+
