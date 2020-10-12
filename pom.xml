@@ -17,6 +17,7 @@
         <module>foodie-search</module>
         <module>foodie-sso</module>
         <module>foodie-rabbitmq</module>
+        <module>foodie-limiter</module>
         <module>foodie-rabbitmq-consumer</module>
         <!--        <module>foodie-demo</module>-->
     </modules>
